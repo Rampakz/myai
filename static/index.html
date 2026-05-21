@@ -5,268 +5,305 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coffee Shop</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
     :root {
-      --bg: #1a1008;
-      --card: #2a1f10;
-      --accent: #c8873a;
-      --accent2: #e6a455;
-      --text: #f5e6d0;
-      --muted: #8a7060;
-      --green: #4caf7d;
+      --bg: #0f0a05;
+      --surface: #1c1208;
+      --card: #231608;
+      --border: rgba(255,255,255,0.07);
+      --accent: #e8943a;
+      --accent2: #f5b96e;
+      --text: #f7ede0;
+      --muted: #7a6652;
+      --tag: #2e1e0e;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding-bottom: 100px;
+      padding-bottom: 90px;
+      overflow-x: hidden;
     }
 
-    /* HEADER */
-    .header {
-      background: linear-gradient(135deg, #2a1208, #1a0e05);
-      padding: 24px 20px 20px;
+    /* HERO */
+    .hero {
+      position: relative;
+      padding: 40px 20px 30px;
       text-align: center;
-      border-bottom: 1px solid #3a2510;
+      background: radial-gradient(ellipse at 50% 0%, #3d1f05 0%, var(--bg) 70%);
+      overflow: hidden;
     }
-    .header h1 {
-      font-size: 28px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(232,148,58,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 20px rgba(232,148,58,0.4));
+    }
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: -0.5px;
     }
-    .header p { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .hero p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+      font-weight: 500;
+    }
 
     /* CATEGORIES */
-    .categories {
+    .cats {
       display: flex;
-      gap: 10px;
-      padding: 16px 20px;
+      gap: 8px;
+      padding: 20px 16px 4px;
       overflow-x: auto;
       scrollbar-width: none;
     }
-    .categories::-webkit-scrollbar { display: none; }
-    .cat-btn {
+    .cats::-webkit-scrollbar { display: none; }
+    .cat {
       flex-shrink: 0;
-      padding: 8px 18px;
-      border-radius: 20px;
-      border: 1.5px solid #3a2510;
-      background: var(--card);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 24px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .cat-btn.active {
+    .cat.active {
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
-      font-weight: 600;
+      box-shadow: 0 4px 20px rgba(232,148,58,0.35);
     }
 
-    /* MENU */
-    .section-title {
-      padding: 8px 20px 12px;
-      font-size: 18px;
+    /* SECTION */
+    .section-label {
+      font-size: 11px;
       font-weight: 700;
-      color: var(--text);
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding: 20px 18px 12px;
     }
-    .menu-grid {
+
+    /* CARDS */
+    .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 0 16px;
+      gap: 10px;
+      padding: 0 12px;
     }
     .card {
       background: var(--card);
-      border-radius: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
       overflow: hidden;
-      border: 1px solid #3a2510;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.15s;
       position: relative;
     }
-    .card:active { transform: scale(0.97); }
-    .card-emoji {
-      font-size: 52px;
-      text-align: center;
-      padding: 20px 10px 10px;
-      background: linear-gradient(180deg, #2e1a0a, #231408);
+    .card:active { transform: scale(0.96); }
+
+    .card-img {
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 58px;
+      background: linear-gradient(160deg, #2a1a08, #1a0e04);
+      position: relative;
     }
-    .card-body { padding: 10px 12px 14px; }
+    .card-img::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 40px;
+      background: linear-gradient(transparent, var(--card));
+    }
+
+    .hit-badge {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      z-index: 1;
+    }
+
+    .card-body { padding: 10px 12px 12px; }
     .card-name {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .card-desc {
       font-size: 11px;
       color: var(--muted);
-      margin-bottom: 8px;
       line-height: 1.4;
+      margin-bottom: 10px;
     }
-    .card-footer {
+    .card-foot {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
     .price {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--accent);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent2);
     }
-    .add-btn {
-      width: 28px; height: 28px;
+    .add {
+      width: 32px; height: 32px;
       border-radius: 50%;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
       border: none;
       color: white;
-      font-size: 20px;
+      font-size: 22px;
+      line-height: 1;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
+      box-shadow: 0 4px 12px rgba(232,148,58,0.4);
+      transition: transform 0.15s;
     }
-    .add-btn:active { background: var(--accent2); }
-    .badge {
-      position: absolute;
-      top: 10px; right: 10px;
-      background: var(--accent);
-      color: white;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 10px;
-    }
+    .add:active { transform: scale(0.88); }
 
-    /* CART */
+    /* CART BAR */
     .cart-bar {
       position: fixed;
       bottom: 0; left: 0; right: 0;
-      padding: 12px 16px;
-      background: linear-gradient(180deg, transparent, var(--bg) 20%);
-      padding-top: 30px;
+      padding: 8px 12px 12px;
+      background: linear-gradient(to top, var(--bg) 60%, transparent);
     }
     .cart-btn {
       width: 100%;
-      padding: 16px;
-      border-radius: 16px;
+      padding: 16px 20px;
+      border-radius: 18px;
       border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
       color: white;
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      transition: opacity 0.2s;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 8px 30px rgba(232,148,58,0.4);
+      transition: opacity 0.2s, transform 0.15s;
     }
-    .cart-btn:disabled { opacity: 0.4; }
-    .cart-btn .cart-count {
-      background: rgba(255,255,255,0.25);
-      padding: 4px 12px;
+    .cart-btn:active { transform: scale(0.98); }
+    .cart-btn:disabled {
+      opacity: 0.35;
+      box-shadow: none;
+    }
+    .cart-pill {
+      background: rgba(0,0,0,0.2);
+      padding: 5px 14px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 600;
     }
 
     /* CART PAGE */
-    .cart-page {
-      display: none;
-      padding: 20px 16px;
+    .page { display: none; padding: 20px 14px; }
+    .page.show { display: block; }
+
+    .back {
+      display: flex; align-items: center; gap: 8px;
+      background: none; border: none;
+      color: var(--accent); font-size: 15px; font-weight: 600;
+      cursor: pointer; margin-bottom: 22px;
     }
-    .cart-page.show { display: block; }
+
     .cart-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      display: flex; align-items: center; gap: 14px;
       padding: 14px;
       background: var(--card);
-      border-radius: 14px;
+      border-radius: 16px;
       margin-bottom: 10px;
-      border: 1px solid #3a2510;
+      border: 1px solid var(--border);
     }
-    .cart-item-emoji { font-size: 32px; }
-    .cart-item-info { flex: 1; }
-    .cart-item-name { font-size: 15px; font-weight: 600; }
-    .cart-item-price { font-size: 13px; color: var(--accent); margin-top: 2px; }
-    .qty-ctrl {
-      display: flex; align-items: center; gap: 10px;
+    .ci-emoji { font-size: 36px; }
+    .ci-info { flex: 1; }
+    .ci-name { font-size: 15px; font-weight: 700; }
+    .ci-price { font-size: 13px; color: var(--accent2); margin-top: 2px; font-weight: 600; }
+    .qty {
+      display: flex; align-items: center; gap: 12px;
     }
     .qty-btn {
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      border: 1.5px solid var(--accent);
-      background: transparent;
-      color: var(--accent);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid rgba(232,148,58,0.4);
+      background: var(--tag);
+      color: var(--accent2); font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-    .qty-num { font-size: 16px; font-weight: 700; min-width: 20px; text-align: center; }
+    .qty-n { font-size: 16px; font-weight: 700; min-width: 22px; text-align: center; }
 
-    .order-total {
+    .total-box {
       background: var(--card);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 16px;
       margin: 16px 0;
-      border: 1px solid #3a2510;
+      border: 1px solid var(--border);
     }
-    .order-total-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 14px;
-      color: var(--muted);
+    .total-row {
+      display: flex; justify-content: space-between;
+      font-size: 14px; color: var(--muted); margin-bottom: 8px;
     }
-    .order-total-main {
-      display: flex;
-      justify-content: space-between;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      padding-top: 10px;
-      border-top: 1px solid #3a2510;
+    .total-main {
+      display: flex; justify-content: space-between;
+      font-size: 19px; font-weight: 800;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
     }
-
-    .back-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--accent);
-      font-size: 15px;
-      cursor: pointer;
-      margin-bottom: 20px;
-      background: none;
-      border: none;
-    }
+    .total-main span:last-child { color: var(--accent2); }
 
     /* SUCCESS */
     .success-page {
       display: none;
       text-align: center;
-      padding: 60px 20px;
+      padding: 80px 20px;
     }
     .success-page.show { display: block; }
-    .success-icon { font-size: 80px; margin-bottom: 20px; }
-    .success-page h2 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
-    .success-page p { color: var(--muted); font-size: 15px; line-height: 1.6; }
-    .order-num {
+    .success-anim { font-size: 90px; margin-bottom: 24px; animation: pop 0.4s ease; }
+    @keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.1)} 100%{transform:scale(1)} }
+    .success-page h2 { font-size: 26px; font-weight: 900; margin-bottom: 10px; }
+    .success-page p { color: var(--muted); font-size: 15px; line-height: 1.7; }
+    .order-badge {
       display: inline-block;
-      margin-top: 20px;
-      padding: 10px 24px;
+      margin-top: 24px;
+      padding: 12px 32px;
       background: var(--card);
-      border-radius: 12px;
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--accent);
-      border: 1.5px solid #3a2510;
+      border-radius: 16px;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--accent2);
+      border: 1.5px solid var(--border);
     }
 
     .hidden { display: none !important; }
@@ -274,206 +311,179 @@
 </head>
 <body>
 
-<!-- ГЛАВНАЯ СТРАНИЦА -->
 <div id="mainPage">
-  <div class="header">
-    <h1>☕ Coffee Shop</h1>
-    <p>Свежий кофе и вкусная еда</p>
+  <div class="hero">
+    <span class="hero-icon">☕</span>
+    <h1>Coffee Shop</h1>
+    <p>Свежий кофе · Чай · Выпечка</p>
   </div>
 
-  <div class="categories">
-    <button class="cat-btn active" onclick="filterMenu('all')">Всё</button>
-    <button class="cat-btn" onclick="filterMenu('coffee')">☕ Кофе</button>
-    <button class="cat-btn" onclick="filterMenu('tea')">🍵 Чай</button>
-    <button class="cat-btn" onclick="filterMenu('food')">🥐 Еда</button>
-    <button class="cat-btn" onclick="filterMenu('cold')">🧊 Холодное</button>
+  <div class="cats">
+    <button class="cat active" onclick="filter('all',this)">✨ Всё</button>
+    <button class="cat" onclick="filter('coffee',this)">☕ Кофе</button>
+    <button class="cat" onclick="filter('tea',this)">🍵 Чай</button>
+    <button class="cat" onclick="filter('food',this)">🥐 Еда</button>
+    <button class="cat" onclick="filter('cold',this)">🧊 Холодное</button>
   </div>
 
-  <div class="section-title">Меню</div>
-  <div class="menu-grid" id="menuGrid"></div>
+  <div class="section-label">Меню</div>
+  <div class="grid" id="grid"></div>
 
   <div class="cart-bar">
     <button class="cart-btn" id="cartBtn" onclick="showCart()" disabled>
       <span>🛒 Корзина</span>
-      <span class="cart-count" id="cartCount">0 товаров • 0 ₽</span>
+      <span class="cart-pill" id="cartInfo">пусто</span>
     </button>
   </div>
 </div>
 
-<!-- КОРЗИНА -->
-<div id="cartPage" class="cart-page">
-  <button class="back-btn" onclick="showMain()">← Назад</button>
-  <div class="section-title" style="padding:0 0 16px">Ваш заказ</div>
+<div id="cartPage" class="page">
+  <button class="back" onclick="showMain()">← Назад</button>
+  <div class="section-label" style="padding:0 0 16px">Ваш заказ</div>
   <div id="cartItems"></div>
-  <div class="order-total">
-    <div class="order-total-row"><span>Товаров</span><span id="totalCount">0</span></div>
-    <div class="order-total-main"><span>Итого</span><span id="totalPrice">0 ₽</span></div>
+  <div class="total-box">
+    <div class="total-row"><span>Позиций</span><span id="totalCount">0</span></div>
+    <div class="total-main"><span>Итого</span><span id="totalPrice">0 ₽</span></div>
   </div>
   <div class="cart-bar">
-    <button class="cart-btn" onclick="placeOrder()">
-      <span>Оформить заказ</span>
-      <span class="cart-count" id="orderTotal">0 ₽</span>
+    <button class="cart-btn" onclick="order()">
+      <span>✅ Оформить заказ</span>
+      <span class="cart-pill" id="orderSum">0 ₽</span>
     </button>
   </div>
 </div>
 
-<!-- УСПЕХ -->
 <div id="successPage" class="success-page">
-  <div class="success-icon">✅</div>
+  <div class="success-anim">✅</div>
   <h2>Заказ принят!</h2>
-  <p>Мы уже готовим ваш заказ.<br>Ожидайте уведомление.</p>
-  <div class="order-num" id="orderNum">#0000</div>
+  <p>Мы уже готовим для вас.<br>Ожидайте уведомление.</p>
+  <div class="order-badge" id="orderNum">#0000</div>
 </div>
 
 <script>
-  const tg = window.Telegram.WebApp;
-  tg.expand();
-  tg.setBackgroundColor('#1a1008');
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); tg.setBackgroundColor?.('#0f0a05'); }
 
-  const MENU = [
-    { id:1, name:'Эспрессо', desc:'Крепкий, насыщенный', price:150, emoji:'☕', cat:'coffee' },
-    { id:2, name:'Капучино', desc:'Нежная молочная пенка', price:280, emoji:'☕', cat:'coffee', popular:true },
-    { id:3, name:'Латте', desc:'Мягкий вкус, много молока', price:300, emoji:'🥛', cat:'coffee' },
-    { id:4, name:'Американо', desc:'Длинный, лёгкий кофе', price:200, emoji:'☕', cat:'coffee' },
-    { id:5, name:'Раф', desc:'Сливки + ваниль', price:350, emoji:'🤍', cat:'coffee', popular:true },
-    { id:6, name:'Зелёный чай', desc:'Лёгкий, освежающий', price:180, emoji:'🍵', cat:'tea' },
-    { id:7, name:'Чёрный чай', desc:'Классика', price:150, emoji:'🫖', cat:'tea' },
-    { id:8, name:'Матча латте', desc:'Японский зелёный чай', price:320, emoji:'🍵', cat:'tea', popular:true },
-    { id:9, name:'Круассан', desc:'Масляный, хрустящий', price:220, emoji:'🥐', cat:'food' },
-    { id:10, name:'Чизкейк', desc:'Нью-Йорк стайл', price:280, emoji:'🍰', cat:'food', popular:true },
-    { id:11, name:'Тост с авокадо', desc:'Здоровый завтрак', price:350, emoji:'🥑', cat:'food' },
-    { id:12, name:'Холодный латте', desc:'Со льдом', price:320, emoji:'🧊', cat:'cold' },
-    { id:13, name:'Фраппе', desc:'Взбитый со льдом', price:350, emoji:'🥤', cat:'cold', popular:true },
-    { id:14, name:'Лимонад', desc:'Домашний', price:250, emoji:'🍋', cat:'cold' },
-  ];
+const MENU = [
+  {id:1,n:'Эспрессо',d:'Крепкий, насыщенный',p:150,e:'☕',c:'coffee'},
+  {id:2,n:'Капучино',d:'Нежная молочная пенка',p:280,e:'☕',c:'coffee',hot:true},
+  {id:3,n:'Латте',d:'Мягкий, много молока',p:300,e:'🥛',c:'coffee'},
+  {id:4,n:'Американо',d:'Длинный, лёгкий',p:200,e:'☕',c:'coffee'},
+  {id:5,n:'Раф',d:'Сливки + ваниль',p:350,e:'🤍',c:'coffee',hot:true},
+  {id:6,n:'Флэт Уайт',d:'Двойной, молочный',p:320,e:'☕',c:'coffee'},
+  {id:7,n:'Зелёный чай',d:'Лёгкий, освежающий',p:180,e:'🍵',c:'tea'},
+  {id:8,n:'Чёрный чай',d:'Классика',p:150,e:'🫖',c:'tea'},
+  {id:9,n:'Матча латте',d:'Японский зелёный',p:320,e:'🍵',c:'tea',hot:true},
+  {id:10,n:'Круассан',d:'Масляный, хрустящий',p:220,e:'🥐',c:'food'},
+  {id:11,n:'Чизкейк',d:'Нью-Йорк стайл',p:280,e:'🍰',c:'food',hot:true},
+  {id:12,n:'Тост авокадо',d:'Здоровый завтрак',p:350,e:'🥑',c:'food'},
+  {id:13,n:'Холодный латте',d:'Со льдом',p:320,e:'🧊',c:'cold'},
+  {id:14,n:'Фраппе',d:'Взбитый со льдом',p:350,e:'🥤',c:'cold',hot:true},
+  {id:15,n:'Лимонад',d:'Домашний',p:250,e:'🍋',c:'cold'},
+];
 
-  let cart = {};
-  let currentFilter = 'all';
+let cart={}, curCat='all';
 
-  function renderMenu() {
-    const grid = document.getElementById('menuGrid');
-    const items = currentFilter === 'all' ? MENU : MENU.filter(i => i.cat === currentFilter);
-    grid.innerHTML = items.map(item => `
-      <div class="card" onclick="addToCart(${item.id})">
-        ${item.popular ? '<div class="badge">Хит</div>' : ''}
-        <div class="card-emoji">${item.emoji}</div>
-        <div class="card-body">
-          <div class="card-name">${item.name}</div>
-          <div class="card-desc">${item.desc}</div>
-          <div class="card-footer">
-            <span class="price">${item.price} ₽</span>
-            <button class="add-btn" onclick="event.stopPropagation();addToCart(${item.id})">+</button>
-          </div>
+function render(){
+  const items = curCat==='all' ? MENU : MENU.filter(i=>i.c===curCat);
+  document.getElementById('grid').innerHTML = items.map(i=>`
+    <div class="card" onclick="add(${i.id})">
+      ${i.hot?'<div class="hit-badge">ХИТ</div>':''}
+      <div class="card-img">${i.e}</div>
+      <div class="card-body">
+        <div class="card-name">${i.n}</div>
+        <div class="card-desc">${i.d}</div>
+        <div class="card-foot">
+          <span class="price">${i.p} ₽</span>
+          <button class="add" id="add${i.id}" onclick="event.stopPropagation();add(${i.id})">+</button>
         </div>
       </div>
-    `).join('');
-  }
+    </div>`).join('');
+}
 
-  function filterMenu(cat) {
-    currentFilter = cat;
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    renderMenu();
-  }
+function filter(cat, el){
+  curCat=cat;
+  document.querySelectorAll('.cat').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
 
-  function addToCart(id) {
-    cart[id] = (cart[id] || 0) + 1;
-    updateCartBar();
-    // анимация
-    const btn = event.target.closest('.card')?.querySelector('.add-btn');
-    if (btn) { btn.textContent = '✓'; setTimeout(() => btn.textContent = '+', 500); }
-  }
+function add(id){
+  cart[id]=(cart[id]||0)+1;
+  const btn=document.getElementById('add'+id);
+  if(btn){btn.textContent='✓';setTimeout(()=>btn.textContent='+',600);}
+  updateBar();
+}
 
-  function updateCartBar() {
-    const total = Object.entries(cart).reduce((s,[id,qty]) => {
-      const item = MENU.find(i => i.id == id);
-      return s + (item ? item.price * qty : 0);
-    }, 0);
-    const count = Object.values(cart).reduce((s,q) => s+q, 0);
-    const btn = document.getElementById('cartBtn');
-    btn.disabled = count === 0;
-    document.getElementById('cartCount').textContent = `${count} шт • ${total} ₽`;
-  }
+function updateBar(){
+  const total=Object.entries(cart).reduce((s,[id,q])=>{const i=MENU.find(x=>x.id==id);return s+(i?i.p*q:0);},0);
+  const count=Object.values(cart).reduce((s,q)=>s+q,0);
+  const btn=document.getElementById('cartBtn');
+  btn.disabled=count===0;
+  document.getElementById('cartInfo').textContent=count?`${count} шт · ${total} ₽`:'пусто';
+}
 
-  function showCart() {
-    document.getElementById('mainPage').classList.add('hidden');
-    document.getElementById('cartPage').classList.add('show');
-    renderCart();
-  }
+function showCart(){
+  document.getElementById('mainPage').classList.add('hidden');
+  document.getElementById('cartPage').classList.add('show');
+  renderCart();
+}
+function showMain(){
+  document.getElementById('mainPage').classList.remove('hidden');
+  document.getElementById('cartPage').classList.remove('show');
+}
 
-  function showMain() {
-    document.getElementById('mainPage').classList.remove('hidden');
+function renderCart(){
+  const el=document.getElementById('cartItems');
+  el.innerHTML=Object.entries(cart).map(([id,q])=>{
+    const i=MENU.find(x=>x.id==id); if(!i)return'';
+    return`<div class="cart-item">
+      <div class="ci-emoji">${i.e}</div>
+      <div class="ci-info">
+        <div class="ci-name">${i.n}</div>
+        <div class="ci-price">${i.p*q} ₽</div>
+      </div>
+      <div class="qty">
+        <button class="qty-btn" onclick="chg(${id},-1)">−</button>
+        <span class="qty-n">${q}</span>
+        <button class="qty-btn" onclick="chg(${id},1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  const total=Object.entries(cart).reduce((s,[id,q])=>{const i=MENU.find(x=>x.id==id);return s+(i?i.p*q:0);},0);
+  const count=Object.values(cart).reduce((s,q)=>s+q,0);
+  document.getElementById('totalCount').textContent=count;
+  document.getElementById('totalPrice').textContent=total+' ₽';
+  document.getElementById('orderSum').textContent=total+' ₽';
+}
+
+function chg(id,d){
+  cart[id]=(cart[id]||0)+d;
+  if(cart[id]<=0)delete cart[id];
+  if(!Object.keys(cart).length){showMain();return;}
+  updateBar(); renderCart();
+}
+
+function order(){
+  const items=Object.entries(cart).map(([id,q])=>{const i=MENU.find(x=>x.id==id);return{id:+id,name:i.n,qty:q,price:i.p};});
+  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
+  fetch('/api/order',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      user_id: tg?.initDataUnsafe?.user?.id||0,
+      username: tg?.initDataUnsafe?.user?.username||'гость',
+      items, total
+    })
+  }).then(r=>r.json()).then(d=>{
     document.getElementById('cartPage').classList.remove('show');
-  }
+    document.getElementById('successPage').classList.add('show');
+    document.getElementById('orderNum').textContent='#'+String(d.order_id).padStart(4,'0');
+    cart={}; updateBar();
+  }).catch(()=>alert('Ошибка. Попробуйте снова.'));
+}
 
-  function renderCart() {
-    const container = document.getElementById('cartItems');
-    container.innerHTML = Object.entries(cart).map(([id, qty]) => {
-      const item = MENU.find(i => i.id == id);
-      if (!item) return '';
-      return `
-        <div class="cart-item">
-          <div class="cart-item-emoji">${item.emoji}</div>
-          <div class="cart-item-info">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-price">${item.price * qty} ₽</div>
-          </div>
-          <div class="qty-ctrl">
-            <button class="qty-btn" onclick="changeQty(${id}, -1)">−</button>
-            <span class="qty-num">${qty}</span>
-            <button class="qty-btn" onclick="changeQty(${id}, 1)">+</button>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    const total = Object.entries(cart).reduce((s,[id,qty]) => {
-      const item = MENU.find(i => i.id == id);
-      return s + (item ? item.price * qty : 0);
-    }, 0);
-    const count = Object.values(cart).reduce((s,q) => s+q, 0);
-    document.getElementById('totalCount').textContent = count;
-    document.getElementById('totalPrice').textContent = total + ' ₽';
-    document.getElementById('orderTotal').textContent = total + ' ₽';
-  }
-
-  function changeQty(id, delta) {
-    cart[id] = (cart[id] || 0) + delta;
-    if (cart[id] <= 0) delete cart[id];
-    if (Object.keys(cart).length === 0) { showMain(); return; }
-    updateCartBar();
-    renderCart();
-  }
-
-  function placeOrder() {
-    const items = Object.entries(cart).map(([id, qty]) => {
-      const item = MENU.find(i => i.id == id);
-      return { id: parseInt(id), name: item.name, qty, price: item.price };
-    });
-    const total = items.reduce((s,i) => s + i.price * i.qty, 0);
-
-    fetch('/api/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: tg.initDataUnsafe?.user?.id || 0,
-        username: tg.initDataUnsafe?.user?.username || 'гость',
-        items,
-        total
-      })
-    })
-    .then(r => r.json())
-    .then(data => {
-      document.getElementById('cartPage').classList.remove('show');
-      document.getElementById('successPage').classList.add('show');
-      document.getElementById('orderNum').textContent = '#' + String(data.order_id).padStart(4, '0');
-      cart = {};
-      updateCartBar();
-    })
-    .catch(() => alert('Ошибка. Попробуйте снова.'));
-  }
-
-  renderMenu();
+render();
 </script>
 </body>
 </html>
