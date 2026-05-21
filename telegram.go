@@ -23,6 +23,22 @@ func startTelegramBot() {
 	}
 
 	initDB()
+
+	// запускаем HTTP сервер для Mini App
+	adminID := int64(0)
+	adminIDStr := os.Getenv("ADMIN_ID")
+	if adminIDStr != "" {
+		fmt.Sscan(adminIDStr, &adminID)
+	}
+
+	adminNotify = func(chatID int64, text string) {
+		msg := tgbotapi.NewMessage(chatID, text)
+		msg.ParseMode = "Markdown"
+		bot.Send(msg)
+	}
+
+	go startServer(nil, adminID)
+
 	fmt.Printf("Бот запущен: @%s\n", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
@@ -41,7 +57,20 @@ func startTelegramBot() {
 
 		switch {
 		case text == "/start":
-			reply = "Привет! Я AI-ассистент. Спрашивай что угодно.\n\nКоманды:\n/clear — очистить историю\n/time — текущее время"
+			appURL := os.Getenv("APP_URL")
+			if appURL == "" {
+				appURL = "https://example.com"
+			}
+			keyboard := tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonURL("☕ Открыть меню", appURL),
+				),
+			)
+			msg := tgbotapi.NewMessage(chatID, "Добро пожаловать в *Coffee Shop* ☕\n\nСвежий кофе, чай и вкусная еда. Нажми кнопку чтобы сделать заказ!")
+			msg.ParseMode = "Markdown"
+			msg.ReplyMarkup = keyboard
+			bot.Send(msg)
+			continue
 
 		case text == "/clear":
 			clearUserHistory(chatID)

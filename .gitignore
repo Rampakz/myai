@@ -7,3 +7,4 @@ test.go
 factorial.go
 calc.go
 hello.txt
+!static/

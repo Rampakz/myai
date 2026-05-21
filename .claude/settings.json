@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ollama list *)",
+      "Bash(pkill -f \"go run main.go\")",
+      "Bash(go build *)"
+    ]
+  }
+}

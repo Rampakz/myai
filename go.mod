@@ -1,6 +1,6 @@
 module myai
 
-go 1.22
+go 1.23.0
 
 require (
 	github.com/anthropics/anthropic-sdk-go v1.44.1 // indirect

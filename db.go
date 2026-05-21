@@ -22,6 +22,16 @@ func initDB() {
 		history TEXT DEFAULT '[]',
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	)`)
+
+	db.Exec(`CREATE TABLE IF NOT EXISTS orders (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		user_id INTEGER,
+		username TEXT,
+		items TEXT,
+		total INTEGER,
+		status TEXT DEFAULT 'new',
+		created_at TEXT
+	)`)
 }
 
 func loadUserHistory(chatID int64) []Message {

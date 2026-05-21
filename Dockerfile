@@ -15,5 +15,6 @@ FROM alpine:latest
 RUN apk add --no-cache ca-certificates sqlite-libs
 WORKDIR /app
 COPY --from=builder /app/myai .
+COPY static/ ./static/
 
 CMD ["./myai", "-tg"]
