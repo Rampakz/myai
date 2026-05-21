@@ -662,7 +662,7 @@
 <div class="sticky-bar" id="stickyBar">
   <button class="sticky-btn" onclick="openCart()">
     <span id="stickyCount">0 позиций</span>
-    <span id="stickyTotal">0 ₽</span>
+    <span id="stickyTotal">0 ₸</span>
   </button>
 </div>
 
@@ -677,7 +677,7 @@
     <div class="cart-foot">
       <div class="cart-total-row">
         <span class="cart-total-label">Итого</span>
-        <span class="cart-total-val" id="cartTotal">0 ₽</span>
+        <span class="cart-total-val" id="cartTotal">0 ₸</span>
       </div>
       <button class="order-btn" id="orderBtn" onclick="placeOrder()" disabled>Оформить заказ</button>
     </div>
@@ -693,21 +693,21 @@
 
 <script>
 const ITEMS = [
-  { id:1,  cat:'coffee', emoji:'☕', name:'Эспрессо',    desc:'Двойной шот, арабика 100%',           price:180 },
-  { id:2,  cat:'coffee', emoji:'☕', name:'Американо',   desc:'Эспрессо с горячей водой',             price:210 },
-  { id:3,  cat:'coffee', emoji:'🥛', name:'Капучино',    desc:'Эспрессо, вспененное молоко',          price:280 },
-  { id:4,  cat:'coffee', emoji:'🥛', name:'Латте',       desc:'Нежный кофе с молоком',                price:300 },
-  { id:5,  cat:'coffee', emoji:'🍫', name:'Мокка',       desc:'Кофе, шоколад, молочная пена',         price:320 },
-  { id:6,  cat:'coffee', emoji:'☁️', name:'Флэт Уайт',  desc:'Двойной шот, мало молока',             price:290 },
-  { id:7,  cat:'tea',    emoji:'🍵', name:'Зелёный чай', desc:'Японский сенча, 250 мл',               price:180 },
-  { id:8,  cat:'tea',    emoji:'🌿', name:'Мятный чай',  desc:'Свежая мята, мёд',                     price:200 },
-  { id:9,  cat:'tea',    emoji:'🌸', name:'Матча',       desc:'Церемониальный grade',                 price:260 },
-  { id:10, cat:'food',   emoji:'🥐', name:'Круассан',    desc:'Слоёное тесто, сливочное масло',       price:150 },
-  { id:11, cat:'food',   emoji:'🎂', name:'Чизкейк',     desc:'Нью-Йорк стайл, ягодный соус',         price:280 },
-  { id:12, cat:'food',   emoji:'🍪', name:'Брауни',      desc:'Тёмный шоколад, грецкий орех',         price:220 },
-  { id:13, cat:'food',   emoji:'🥪', name:'Сэндвич',     desc:'Авокадо, яйцо пашот, бекон',           price:350 },
-  { id:14, cat:'cold',   emoji:'🧊', name:'Айс Латте',   desc:'Холодный кофе со льдом',               price:320 },
-  { id:15, cat:'cold',   emoji:'🍋', name:'Лимонад',     desc:'Лимон, мята, газированная вода',        price:250 },
+  { id:1,  cat:'coffee', emoji:'☕', name:'Эспрессо',    desc:'Двойной шот, арабика 100%',           price:900  },
+  { id:2,  cat:'coffee', emoji:'☕', name:'Американо',   desc:'Эспрессо с горячей водой',             price:1000 },
+  { id:3,  cat:'coffee', emoji:'🥛', name:'Капучино',    desc:'Эспрессо, вспененное молоко',          price:1400 },
+  { id:4,  cat:'coffee', emoji:'🥛', name:'Латте',       desc:'Нежный кофе с молоком',                price:1500 },
+  { id:5,  cat:'coffee', emoji:'🍫', name:'Мокка',       desc:'Кофе, шоколад, молочная пена',         price:1600 },
+  { id:6,  cat:'coffee', emoji:'☁️', name:'Флэт Уайт',  desc:'Двойной шот, мало молока',             price:1400 },
+  { id:7,  cat:'tea',    emoji:'🍵', name:'Зелёный чай', desc:'Японский сенча, 250 мл',               price:900  },
+  { id:8,  cat:'tea',    emoji:'🌿', name:'Мятный чай',  desc:'Свежая мята, мёд',                     price:1000 },
+  { id:9,  cat:'tea',    emoji:'🌸', name:'Матча',       desc:'Церемониальный grade',                 price:1300 },
+  { id:10, cat:'food',   emoji:'🥐', name:'Круассан',    desc:'Слоёное тесто, сливочное масло',       price:800  },
+  { id:11, cat:'food',   emoji:'🎂', name:'Чизкейк',     desc:'Нью-Йорк стайл, ягодный соус',         price:1400 },
+  { id:12, cat:'food',   emoji:'🍪', name:'Брауни',      desc:'Тёмный шоколад, грецкий орех',         price:1100 },
+  { id:13, cat:'food',   emoji:'🥪', name:'Сэндвич',     desc:'Авокадо, яйцо пашот, бекон',           price:1800 },
+  { id:14, cat:'cold',   emoji:'🧊', name:'Айс Латте',   desc:'Холодный кофе со льдом',               price:1600 },
+  { id:15, cat:'cold',   emoji:'🍋', name:'Лимонад',     desc:'Лимон, мята, газированная вода',        price:1200 },
 ];
 
 let cart = {};
@@ -728,7 +728,7 @@ function renderMenu() {
         <div class="item-name">${item.name}</div>
         <div class="item-desc">${item.desc}</div>
       </div>
-      <div class="item-price">${item.price} ₽</div>
+      <div class="item-price">${item.price} ₸</div>
       <div class="item-add-wrap">
         <button class="item-add ${(cart[item.id]||0)>0?'added':''}" onclick="addItem(${item.id})">+</button>
       </div>`;
@@ -760,10 +760,10 @@ function plural(n,a,b,c){
 function updateUI() {
   const n = getCount(), t = getTotal();
   document.getElementById('cartBtn').textContent = `Корзина (${n})`;
-  document.getElementById('cartTotal').textContent = t + ' ₽';
+  document.getElementById('cartTotal').textContent = t + ' ₸';
   document.getElementById('orderBtn').disabled = n === 0;
   document.getElementById('stickyCount').textContent = n + ' ' + plural(n,'позиция','позиции','позиций');
-  document.getElementById('stickyTotal').textContent = t + ' ₽';
+  document.getElementById('stickyTotal').textContent = t + ' ₸';
   document.getElementById('stickyBar').classList.toggle('visible', n > 0);
 }
 
@@ -776,7 +776,7 @@ function renderCartBody() {
     return `<div class="cart-line">
       <div class="cart-line-info">
         <div class="cart-line-name">${item.name}</div>
-        <div class="cart-line-price">${item.price} ₽ × ${q} = ${item.price*q} ₽</div>
+        <div class="cart-line-price">${item.price} ₸ × ${q} = ${item.price*q} ₸</div>
       </div>
       <div class="cart-qty">
         <button class="qty-btn" onclick="changeQty(${id},-1)">−</button>

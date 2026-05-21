@@ -430,7 +430,7 @@ function renderAll() {
   document.getElementById('statTotal').textContent = allOrders.length;
   document.getElementById('statNew').textContent = allOrders.filter(o=>o.status==='new').length;
   document.getElementById('statCooking').textContent = allOrders.filter(o=>o.status==='cooking').length;
-  document.getElementById('statRevenue').textContent = todayOrders.reduce((s,o)=>s+o.total,0) + ' ₽';
+  document.getElementById('statRevenue').textContent = todayOrders.reduce((s,o)=>s+o.total,0) + ' ₸';
   renderTable();
 }
 
@@ -461,7 +461,7 @@ function renderTable() {
         <div class="order-user">@${order.username || '—'}</div>
       </td>
       <td><div class="order-items">${itemsHtml}</div></td>
-      <td><div class="order-total">${order.total} ₽</div></td>
+      <td><div class="order-total">${order.total} ₸</div></td>
       <td><div class="order-time">${time}</div></td>
       <td><span class="badge ${STATUS_BADGE[order.status]||''}">${STATUS_LABEL[order.status]||order.status}</span></td>
       <td><div class="action-btns">${actHtml || '<span style="color:#CCC;font-size:12px">—</span>'}</div></td>
