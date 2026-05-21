@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru" style="color-scheme: light;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>Админка — Кофейня</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { color-scheme: light only; }
+    body {
+      background: #FAFAF7 !important;
+      color: #1a1a1a !important;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* LOGIN */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-box {
+      width: 360px;
+      border: 1px solid #E5E0D8;
+      padding: 48px 40px;
+    }
+
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .login-sub {
+      font-size: 12px;
+      color: #AAA;
+      margin-bottom: 32px;
+    }
+
+    .form-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #AAA;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #E5E0D8;
+      background: #FAFAF7;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #1a1a1a;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus { border-color: #1a1a1a; }
+
+    .form-btn {
+      width: 100%;
+      padding: 14px;
+      background: #1a1a1a;
+      color: #FAFAF7;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .login-error {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #c0392b;
+      text-align: center;
+      display: none;
+    }
+
+    /* DASHBOARD */
+    .dashboard { display: none; }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: #FAFAF7;
+      border-bottom: 1px solid #E5E0D8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .refresh-btn {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #AAA;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .refresh-btn:hover { color: #1a1a1a; }
+
+    .logout-btn {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+    }
+
+    .logout-btn:hover { opacity: 1; }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid #E5E0D8;
+    }
+
+    .stat-cell {
+      padding: 24px 40px;
+      border-right: 1px solid #E5E0D8;
+    }
+
+    .stat-cell:last-child { border-right: none; }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #B89A6A;
+      margin-bottom: 8px;
+    }
+
+    .stat-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    /* FILTER */
+    .filter-bar {
+      display: flex;
+      border-bottom: 1px solid #E5E0D8;
+    }
+
+    .filter-btn {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 28px;
+      border: none;
+      border-right: 1px solid #E5E0D8;
+      background: none;
+      cursor: pointer;
+      color: #AAA;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { color: #1a1a1a; }
+    .filter-btn.active { background: #1a1a1a; color: #FAFAF7; }
+
+    /* TABLE */
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .orders-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #AAA;
+      padding: 16px 24px;
+      border-bottom: 1px solid #E5E0D8;
+      background: #FAFAF7;
+    }
+
+    .orders-table td {
+      padding: 18px 24px;
+      border-bottom: 1px solid #E5E0D8;
+      vertical-align: top;
+    }
+
+    .orders-table tr:last-child td { border-bottom: none; }
+    .orders-table tr:hover td { background: rgba(184,154,106,0.04); }
+
+    .order-id {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .order-user { font-size: 12px; color: #888; margin-top: 2px; }
+
+    .order-items { font-size: 13px; line-height: 1.6; }
+    .order-item-line { color: #555; }
+
+    .order-total {
+      font-weight: 600;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+
+    .order-time { font-size: 12px; color: #AAA; white-space: nowrap; }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+
+    .badge-new     { background: #EFF6FF; color: #2563EB; }
+    .badge-cooking { background: #FFFBEB; color: #D97706; }
+    .badge-ready   { background: #F0FDF4; color: #16A34A; }
+    .badge-done    { background: #F5F5F5; color: #999; }
+
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .act-btn {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid #E5E0D8;
+      background: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+      color: #555;
+    }
+
+    .act-btn:hover { border-color: #1a1a1a; color: #1a1a1a; }
+    .act-btn.primary { background: #1a1a1a; color: #FAFAF7; border-color: #1a1a1a; }
+    .act-btn.primary:hover { opacity: 0.7; }
+
+    .empty-state {
+      padding: 80px 40px;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #CCC;
+    }
+
+    @media (max-width: 768px) {
+      header { padding: 0 20px; }
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+      .stat-cell { padding: 20px; }
+      .orders-table th, .orders-table td { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-title">Кофейня</div>
+    <div class="login-sub">Панель управления заказами</div>
+    <label class="form-label">Токен доступа</label>
+    <input class="form-input" type="password" id="tokenInput" placeholder="Введите токен" onkeydown="if(event.key==='Enter')login()">
+    <button class="form-btn" onclick="login()">Войти</button>
+    <div class="login-error" id="loginError">Неверный токен</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <header>
+    <div class="logo">Кофейня · Заказы</div>
+    <div class="header-right">
+      <button class="refresh-btn" onclick="loadOrders()">↻ Обновить</button>
+      <button class="logout-btn" onclick="logout()">Выйти</button>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <div class="stat-label">Всего заказов</div>
+      <div class="stat-val" id="statTotal">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Новые</div>
+      <div class="stat-val" id="statNew">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Готовятся</div>
+      <div class="stat-val" id="statCooking">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Выручка сегодня</div>
+      <div class="stat-val" id="statRevenue">—</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">Все</button>
+    <button class="filter-btn" data-filter="new" onclick="setFilter('new',this)">Новые</button>
+    <button class="filter-btn" data-filter="cooking" onclick="setFilter('cooking',this)">Готовятся</button>
+    <button class="filter-btn" data-filter="ready" onclick="setFilter('ready',this)">Готовы</button>
+    <button class="filter-btn" data-filter="done" onclick="setFilter('done',this)">Выданы</button>
+  </div>
+
+  <table class="orders-table">
+    <thead>
+      <tr>
+        <th>Заказ</th>
+        <th>Состав</th>
+        <th>Сумма</th>
+        <th>Время</th>
+        <th>Статус</th>
+        <th>Действие</th>
+      </tr>
+    </thead>
+    <tbody id="ordersBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">Заказов нет</div>
+</div>
+
+<script>
+let token = '';
+let allOrders = [];
+let currentFilter = 'all';
+let refreshTimer;
+
+const STATUS_LABEL = { new:'Новый', cooking:'Готовится', ready:'Готов', done:'Выдан' };
+const STATUS_BADGE = { new:'badge-new', cooking:'badge-cooking', ready:'badge-ready', done:'badge-done' };
+
+const NEXT_ACTIONS = {
+  new:     [{ label:'В работу', status:'cooking', primary:true }],
+  cooking: [{ label:'Готов ✓',  status:'ready',   primary:true }],
+  ready:   [{ label:'Выдан',    status:'done',     primary:false }],
+  done:    [],
+};
+
+async function login() {
+  const t = document.getElementById('tokenInput').value.trim();
+  if (!t) return;
+  const res = await fetch(`/api/orders?token=${encodeURIComponent(t)}`);
+  if (res.status === 401) {
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  token = t;
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  allOrders = await res.json();
+  renderAll();
+  refreshTimer = setInterval(loadOrders, 30000);
+}
+
+function logout() {
+  clearInterval(refreshTimer);
+  token = '';
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('tokenInput').value = '';
+}
+
+async function loadOrders() {
+  const res = await fetch(`/api/orders?token=${encodeURIComponent(token)}`);
+  if (res.status === 401) { logout(); return; }
+  allOrders = await res.json();
+  renderAll();
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderAll() {
+  const today = new Date().toISOString().slice(0,10);
+  const todayOrders = allOrders.filter(o => o.created_at && o.created_at.startsWith(today));
+
+  document.getElementById('statTotal').textContent = allOrders.length;
+  document.getElementById('statNew').textContent = allOrders.filter(o=>o.status==='new').length;
+  document.getElementById('statCooking').textContent = allOrders.filter(o=>o.status==='cooking').length;
+  document.getElementById('statRevenue').textContent = todayOrders.reduce((s,o)=>s+o.total,0) + ' ₽';
+  renderTable();
+}
+
+function renderTable() {
+  const filtered = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.status === currentFilter);
+  const tbody = document.getElementById('ordersBody');
+  const empty = document.getElementById('emptyState');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  tbody.innerHTML = filtered.map(order => {
+    let items = [];
+    try { items = JSON.parse(order.items); } catch(e){}
+    const itemsHtml = items.map(i => `<div class="order-item-line">${i.name} × ${i.qty}</div>`).join('');
+    const actions = NEXT_ACTIONS[order.status] || [];
+    const actHtml = actions.map(a =>
+      `<button class="act-btn ${a.primary?'primary':''}" onclick="changeStatus(${order.id},'${a.status}')">${a.label}</button>`
+    ).join('');
+    const time = order.created_at ? order.created_at.slice(11,16) : '—';
+    return `<tr>
+      <td>
+        <div class="order-id">#${String(order.id).padStart(4,'0')}</div>
+        <div class="order-user">@${order.username || '—'}</div>
+      </td>
+      <td><div class="order-items">${itemsHtml}</div></td>
+      <td><div class="order-total">${order.total} ₽</div></td>
+      <td><div class="order-time">${time}</div></td>
+      <td><span class="badge ${STATUS_BADGE[order.status]||''}">${STATUS_LABEL[order.status]||order.status}</span></td>
+      <td><div class="action-btns">${actHtml || '<span style="color:#CCC;font-size:12px">—</span>'}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+async function changeStatus(id, status) {
+  await fetch('/api/orders/status', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, status, token })
+  });
+  await loadOrders();
+}
+</script>
+</body>
+</html>

@@ -61,3 +61,35 @@ func saveUserHistory(chatID int64, msgs []Message) {
 func clearUserHistory(chatID int64) {
 	db.Exec("DELETE FROM users WHERE chat_id = ?", chatID)
 }
+
+type Order struct {
+	ID        int    `json:"id"`
+	UserID    int64  `json:"user_id"`
+	Username  string `json:"username"`
+	Items     string `json:"items"`
+	Total     int    `json:"total"`
+	Status    string `json:"status"`
+	CreatedAt string `json:"created_at"`
+}
+
+func getOrders() []Order {
+	rows, err := db.Query(`SELECT id, user_id, username, items, total, status, created_at FROM orders ORDER BY id DESC`)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	var orders []Order
+	for rows.Next() {
+		var o Order
+		rows.Scan(&o.ID, &o.UserID, &o.Username, &o.Items, &o.Total, &o.Status, &o.CreatedAt)
+		orders = append(orders, o)
+	}
+	return orders
+}
+
+func updateOrderStatus(id int, status string) (int64, error) {
+	var userID int64
+	db.QueryRow(`SELECT user_id FROM orders WHERE id = ?`, id).Scan(&userID)
+	_, err := db.Exec(`UPDATE orders SET status = ? WHERE id = ?`, status, id)
+	return userID, err
+}

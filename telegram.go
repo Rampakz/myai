@@ -37,6 +37,12 @@ func startTelegramBot() {
 		bot.Send(msg)
 	}
 
+	notifyUserFn = func(chatID int64, text string) {
+		msg := tgbotapi.NewMessage(chatID, text)
+		msg.ParseMode = "Markdown"
+		bot.Send(msg)
+	}
+
 	go startServer(nil, adminID)
 
 	fmt.Printf("Бот запущен: @%s\n", bot.Self.UserName)
