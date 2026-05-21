@@ -1,291 +1,382 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" style="color-scheme: light;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>КОФЕ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="light">
+  <title>КОФЕЙНЯ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --black: #0a0a0a;
-      --white: #f5f0eb;
-      --gray: #888;
-      --border: #d8d0c8;
+    html {
+      color-scheme: light only;
+      scroll-behavior: smooth;
     }
-
-    html { scroll-behavior: smooth; }
 
     body {
-      background: var(--white);
-      color: var(--black);
+      background: #FAFAF7 !important;
+      color: #1a1a1a !important;
       font-family: 'Inter', sans-serif;
-      font-weight: 300;
+      font-weight: 400;
       min-height: 100vh;
-      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* NAV */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
       z-index: 100;
+      background: #FAFAF7;
+      border-bottom: 1px solid #E5E0D8;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 20px 32px;
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
     }
 
-    .nav-logo {
-      font-family: 'Unbounded', sans-serif;
+    .logo {
+      font-family: 'Playfair Display', serif;
       font-weight: 900;
-      font-size: 15px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      color: #1a1a1a;
     }
 
-    .nav-links {
+    .header-nav {
       display: flex;
-      gap: 32px;
-      list-style: none;
+      gap: 0;
     }
 
-    .nav-links a {
+    .header-nav a {
       font-size: 11px;
-      letter-spacing: 0.15em;
+      font-weight: 500;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--black);
+      color: #999;
       text-decoration: none;
-      opacity: 0.5;
-      transition: opacity 0.2s;
+      padding: 0 20px;
+      line-height: 64px;
+      border-left: 1px solid #E5E0D8;
+      transition: color 0.2s;
     }
 
-    .nav-links a:hover { opacity: 1; }
+    .header-nav a:hover { color: #1a1a1a; }
 
-    .nav-cart {
+    .cart-btn {
       font-size: 11px;
-      letter-spacing: 0.15em;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
+      color: #1a1a1a;
       cursor: pointer;
-      opacity: 0.5;
+      border-left: 1px solid #E5E0D8;
+      padding: 0 0 0 24px;
+      line-height: 1;
+      background: none;
+      border-top: none;
+      border-right: none;
+      border-bottom: none;
       transition: opacity 0.2s;
     }
 
-    .nav-cart:hover { opacity: 1; }
-    .nav-cart.has-items { opacity: 1; font-weight: 500; }
+    .cart-btn:hover { opacity: 0.6; }
 
-    /* HERO */
+    /* ── HERO ── */
     .hero {
-      padding: 140px 32px 80px;
-      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 480px;
+      border-bottom: 1px solid #E5E0D8;
+    }
+
+    .hero-left {
+      padding: 64px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid #E5E0D8;
+    }
+
+    .hero-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #B89A6A;
+      margin-bottom: 24px;
     }
 
     .hero-title {
-      font-family: 'Unbounded', sans-serif;
+      font-family: 'Playfair Display', serif;
       font-weight: 900;
-      font-size: clamp(48px, 12vw, 140px);
-      line-height: 0.9;
+      font-size: clamp(52px, 6vw, 88px);
+      line-height: 1.0;
       letter-spacing: -0.02em;
-      text-transform: uppercase;
-      overflow: hidden;
+      color: #1a1a1a;
     }
 
-    .hero-title span { display: block; }
-    .hero-title .indent { padding-left: 20%; }
-    .hero-title .indent2 { padding-left: 40%; }
-
-    .hero-sub {
-      margin-top: 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+    .hero-title em {
+      font-style: italic;
+      color: #B89A6A;
     }
 
     .hero-desc {
-      font-size: 13px;
-      line-height: 1.7;
-      max-width: 300px;
-      color: var(--gray);
+      font-size: 14px;
+      line-height: 1.75;
+      color: #777;
+      max-width: 320px;
+      margin-top: 32px;
     }
 
-    .hero-hours {
-      text-align: right;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      line-height: 1.8;
-      color: var(--gray);
-    }
-
-    /* SECTION HEADER */
-    .section-header {
+    .hero-right {
+      background: #1a1a1a;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      padding: 0 32px;
-      border-bottom: 1px solid var(--border);
-      overflow: hidden;
+      justify-content: center;
+      padding: 64px 40px;
+      gap: 40px;
     }
 
-    .section-title {
-      font-family: 'Unbounded', sans-serif;
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 56px;
+      font-weight: 700;
+      color: #FAFAF7;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
       font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.3em;
+      font-weight: 500;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: var(--gray);
-      flex-shrink: 0;
-      padding: 24px 32px 24px 0;
-      border-right: 1px solid var(--border);
+      color: #666;
+      margin-top: 8px;
     }
 
-    /* CATEGORIES */
-    .categories {
+    .hero-divider {
+      width: 1px;
+      height: 48px;
+      background: #333;
+    }
+
+    /* ── MENU SECTION ── */
+    .menu-section { }
+
+    .menu-toolbar {
       display: flex;
-      gap: 0;
+      align-items: stretch;
+      border-bottom: 1px solid #E5E0D8;
       overflow-x: auto;
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
 
-    .categories::-webkit-scrollbar { display: none; }
+    .menu-toolbar::-webkit-scrollbar { display: none; }
+
+    .toolbar-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #999;
+      padding: 18px 32px;
+      border-right: 1px solid #E5E0D8;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+    }
 
     .cat-btn {
-      font-family: 'Inter', sans-serif;
       font-size: 11px;
+      font-weight: 500;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      padding: 24px 28px;
+      padding: 18px 24px;
       border: none;
-      border-right: 1px solid var(--border);
+      border-right: 1px solid #E5E0D8;
       background: none;
       cursor: pointer;
-      color: var(--gray);
+      color: #999;
       white-space: nowrap;
       transition: all 0.2s;
     }
 
-    .cat-btn:hover { color: var(--black); }
-    .cat-btn.active { background: var(--black); color: var(--white); }
+    .cat-btn:hover { color: #1a1a1a; }
+    .cat-btn.active { background: #1a1a1a; color: #FAFAF7; }
 
-    /* MENU LIST */
-    .menu-list { border-bottom: 1px solid var(--border); }
-
+    /* ── MENU ITEMS ── */
     .menu-item {
       display: grid;
-      grid-template-columns: 1fr auto auto auto;
+      grid-template-columns: 64px 1fr auto auto;
       align-items: center;
-      gap: 24px;
-      padding: 20px 32px;
-      border-bottom: 1px solid var(--border);
+      gap: 0;
+      border-bottom: 1px solid #E5E0D8;
+      cursor: default;
       transition: background 0.15s;
     }
 
-    .menu-item:last-child { border-bottom: none; }
-    .menu-item:hover { background: rgba(0,0,0,0.02); }
+    .menu-item:hover { background: rgba(184,154,106,0.04); }
     .menu-item[data-hidden] { display: none; }
 
-    .item-info { min-width: 0; }
+    .item-num {
+      font-size: 11px;
+      font-weight: 400;
+      color: #CCC;
+      text-align: center;
+      padding: 24px 0;
+      border-right: 1px solid #E5E0D8;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .item-body {
+      padding: 24px 32px;
+      min-width: 0;
+    }
 
     .item-name {
-      font-family: 'Unbounded', sans-serif;
-      font-size: 13px;
+      font-family: 'Playfair Display', serif;
       font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      font-size: 17px;
+      color: #1a1a1a;
       margin-bottom: 4px;
     }
 
     .item-desc {
       font-size: 12px;
-      color: var(--gray);
-      line-height: 1.5;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .item-emoji {
-      font-size: 22px;
-      line-height: 1;
-      flex-shrink: 0;
+      color: #AAA;
+      font-weight: 300;
     }
 
     .item-price {
-      font-family: 'Unbounded', sans-serif;
-      font-size: 12px;
-      font-weight: 400;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a1a1a;
+      padding: 0 32px;
       white-space: nowrap;
-      color: var(--gray);
-      min-width: 60px;
-      text-align: right;
+      border-left: 1px solid #E5E0D8;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
     }
 
-    .item-add {
-      width: 30px;
-      height: 30px;
-      border: 1px solid var(--black);
-      border-radius: 50%;
-      background: none;
-      cursor: pointer;
-      font-size: 16px;
+    .item-add-wrap {
+      border-left: 1px solid #E5E0D8;
+      align-self: stretch;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      padding: 0 24px;
+    }
+
+    .item-add {
+      width: 34px;
+      height: 34px;
+      border: 1.5px solid #1a1a1a;
+      border-radius: 50%;
+      background: none;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: all 0.15s;
-      color: var(--black);
+      color: #1a1a1a;
+      line-height: 1;
     }
 
     .item-add:hover,
     .item-add.added {
-      background: var(--black);
-      color: var(--white);
+      background: #1a1a1a;
+      color: #FAFAF7;
     }
 
-    /* INFO SECTION */
-    .info-section {
+    /* ── INFO ── */
+    .info-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      border-top: 1px solid var(--border);
+      grid-template-columns: 1fr 1fr 1fr;
+      border-top: 1px solid #E5E0D8;
     }
 
-    .info-block {
-      padding: 40px 32px;
-      border-right: 1px solid var(--border);
+    .info-cell {
+      padding: 40px;
+      border-right: 1px solid #E5E0D8;
     }
 
-    .info-block:last-child { border-right: none; }
+    .info-cell:last-child { border-right: none; }
 
     .info-label {
       font-size: 10px;
+      font-weight: 600;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--gray);
-      margin-bottom: 16px;
+      color: #B89A6A;
+      margin-bottom: 12px;
     }
 
-    .info-text { font-size: 14px; line-height: 1.8; }
+    .info-value {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #555;
+    }
 
-    /* FOOTER */
+    /* ── FOOTER ── */
     footer {
-      padding: 24px 32px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid #E5E0D8;
+      padding: 24px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .footer-copy {
+    .footer-text {
       font-size: 11px;
-      color: var(--gray);
+      color: #BBB;
       letter-spacing: 0.1em;
     }
 
-    /* CART OVERLAY */
+    /* ── STICKY BAR ── */
+    .sticky-bar {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 12px 20px;
+      background: #FAFAF7;
+      border-top: 1px solid #E5E0D8;
+      z-index: 90;
+    }
+
+    .sticky-bar.visible { display: block; }
+
+    .sticky-btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: #1a1a1a;
+      color: #FAFAF7;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ── CART ── */
     .cart-overlay {
       position: fixed;
       inset: 0;
@@ -298,285 +389,278 @@
     .cart-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(10,10,10,0.4);
+      background: rgba(26,26,26,0.5);
     }
 
     .cart-panel {
       position: absolute;
       right: 0; top: 0; bottom: 0;
-      width: min(440px, 100vw);
-      background: var(--white);
+      width: min(480px, 100vw);
+      background: #FAFAF7;
       display: flex;
       flex-direction: column;
-      border-left: 1px solid var(--border);
+      border-left: 1px solid #E5E0D8;
     }
 
-    .cart-top {
-      padding: 24px 32px;
-      border-bottom: 1px solid var(--border);
+    .cart-head {
+      padding: 0 32px;
+      height: 64px;
+      border-bottom: 1px solid #E5E0D8;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
 
-    .cart-heading {
-      font-family: 'Unbounded', sans-serif;
-      font-size: 12px;
+    .cart-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
       font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
     }
 
-    .cart-close {
+    .cart-x {
       background: none;
       border: none;
+      font-size: 24px;
       cursor: pointer;
-      font-size: 22px;
-      color: var(--gray);
+      color: #AAA;
+      line-height: 1;
     }
 
-    .cart-items { flex: 1; overflow-y: auto; }
+    .cart-body { flex: 1; overflow-y: auto; }
 
-    .cart-row {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
+    .cart-empty {
+      padding: 80px 32px;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #BBB;
+    }
+
+    .cart-line {
+      display: flex;
       align-items: center;
       gap: 16px;
-      padding: 16px 32px;
-      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      border-bottom: 1px solid #E5E0D8;
     }
 
-    .cart-row-name {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+    .cart-line-info { flex: 1; }
+
+    .cart-line-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
     }
 
-    .cart-row-price { font-size: 12px; color: var(--gray); white-space: nowrap; }
+    .cart-line-price { font-size: 12px; color: #AAA; }
 
     .cart-qty {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 13px;
+      gap: 14px;
+      font-size: 14px;
     }
 
     .qty-btn {
       background: none;
       border: none;
+      font-size: 18px;
       cursor: pointer;
-      font-size: 16px;
-      color: var(--black);
-      opacity: 0.4;
-      transition: opacity 0.15s;
+      color: #999;
       line-height: 1;
+      transition: color 0.15s;
     }
 
-    .qty-btn:hover { opacity: 1; }
+    .qty-btn:hover { color: #1a1a1a; }
 
-    .cart-empty {
-      padding: 60px 32px;
-      text-align: center;
-      font-size: 11px;
-      color: var(--gray);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-
-    .cart-bottom {
-      border-top: 1px solid var(--border);
+    .cart-foot {
       padding: 24px 32px;
+      border-top: 1px solid #E5E0D8;
     }
 
     .cart-total-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 20px;
     }
 
     .cart-total-label {
       font-size: 11px;
+      font-weight: 600;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--gray);
+      color: #AAA;
     }
 
-    .cart-total-price {
-      font-family: 'Unbounded', sans-serif;
-      font-size: 14px;
+    .cart-total-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
       font-weight: 700;
     }
 
-    .btn-order {
+    .order-btn {
       width: 100%;
       padding: 16px;
-      background: var(--black);
-      color: var(--white);
+      background: #1a1a1a;
+      color: #FAFAF7;
       border: none;
-      font-family: 'Unbounded', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.3em;
+      font-weight: 600;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       cursor: pointer;
       transition: opacity 0.2s;
     }
 
-    .btn-order:hover { opacity: 0.75; }
-    .btn-order:disabled { opacity: 0.25; cursor: default; }
+    .order-btn:hover { opacity: 0.75; }
+    .order-btn:disabled { opacity: 0.25; cursor: default; }
 
-    /* SUCCESS */
+    /* ── SUCCESS ── */
     .success-screen {
       position: fixed;
       inset: 0;
       z-index: 300;
-      background: var(--black);
-      color: var(--white);
+      background: #1a1a1a;
+      color: #FAFAF7;
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 32px;
+      padding: 40px;
     }
 
     .success-screen.open { display: flex; }
 
-    .success-num {
-      font-family: 'Unbounded', sans-serif;
-      font-size: clamp(60px, 20vw, 180px);
+    .success-icon { font-size: 56px; margin-bottom: 24px; }
+
+    .success-big {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(56px, 15vw, 120px);
       font-weight: 900;
       line-height: 1;
-      letter-spacing: -0.03em;
-      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
     }
 
-    .success-label {
+    .success-sub {
       font-size: 11px;
-      letter-spacing: 0.4em;
+      font-weight: 500;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
-      opacity: 0.4;
+      color: #666;
       margin-bottom: 48px;
     }
 
-    .success-back {
+    .success-back-btn {
       font-size: 11px;
+      font-weight: 500;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--white);
-      border: none;
-      border-bottom: 1px solid rgba(255,255,255,0.3);
-      padding-bottom: 4px;
-      cursor: pointer;
+      color: #FAFAF7;
       background: none;
+      border: none;
+      border-bottom: 1px solid #444;
+      padding-bottom: 6px;
+      cursor: pointer;
       font-family: 'Inter', sans-serif;
     }
 
-    /* STICKY BAR */
-    .sticky-bar {
-      display: none;
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      padding: 12px 20px;
-      background: var(--white);
-      border-top: 1px solid var(--border);
-      z-index: 50;
-    }
-
-    .sticky-bar.visible { display: block; }
-
-    .btn-sticky {
-      width: 100%;
-      padding: 14px 20px;
-      background: var(--black);
-      color: var(--white);
-      border: none;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    @media (max-width: 600px) {
-      nav { padding: 16px 20px; }
-      .nav-links { display: none; }
-      .hero { padding: 100px 20px 60px; }
-      .hero-sub { flex-direction: column; align-items: flex-start; gap: 16px; }
-      .hero-hours { text-align: left; }
-      .section-header { padding: 0 20px; }
-      .section-title { padding: 20px 20px 20px 0; }
-      .cat-btn { padding: 20px 18px; }
-      .menu-item { padding: 16px 20px; gap: 12px; }
-      .info-section { grid-template-columns: 1fr; }
-      .info-block { border-right: none; border-bottom: 1px solid var(--border); }
-      footer { padding: 20px; flex-direction: column; gap: 8px; }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      header { padding: 0 20px; }
+      .header-nav { display: none; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { display: none; }
+      .hero-left { padding: 40px 20px; }
+      .hero-title { font-size: 48px; }
+      .toolbar-label { padding: 16px 20px; }
+      .cat-btn { padding: 16px 16px; }
+      .menu-item { grid-template-columns: 40px 1fr auto auto; }
+      .item-body { padding: 20px 16px; }
+      .item-price { padding: 0 16px; }
+      .item-add-wrap { padding: 0 16px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .info-cell { border-right: none; border-bottom: 1px solid #E5E0D8; padding: 28px 20px; }
+      footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo">Кофейня</div>
-  <ul class="nav-links">
-    <li><a href="#menu">Меню</a></li>
-    <li><a href="#info">О нас</a></li>
-  </ul>
-  <div class="nav-cart" id="navCart" onclick="openCart()">Корзина (0)</div>
-</nav>
+<header>
+  <div class="logo">Кофейня</div>
+  <nav class="header-nav">
+    <a href="#menu">Меню</a>
+    <a href="#info">О нас</a>
+  </nav>
+  <button class="cart-btn" id="cartBtn" onclick="openCart()">Корзина (0)</button>
+</header>
 
-<section class="hero" id="top">
-  <div class="hero-title">
-    <span>КО</span>
-    <span class="indent">ФЕЙ</span>
-    <span class="indent2">НЯ</span>
+<section class="hero">
+  <div class="hero-left">
+    <div>
+      <div class="hero-tag">Открыто сегодня · 08:00 — 21:00</div>
+      <h1 class="hero-title">Кофе,<br>который<br><em>нравится.</em></h1>
+      <p class="hero-desc">Свежеобжаренный кофе, авторский чай и домашняя еда. Из лучших ингредиентов, с любовью.</p>
+    </div>
   </div>
-  <div class="hero-sub">
-    <p class="hero-desc">Свежеобжаренный кофе, авторский чай и домашняя еда. Всё из лучших ингредиентов.</p>
-    <div class="hero-hours">
-      Пн — Пт: 08:00 — 21:00<br>
-      Сб — Вс: 09:00 — 22:00
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="hero-stat-num">15</div>
+      <div class="hero-stat-label">Позиций</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">☕</div>
+      <div class="hero-stat-label">Specialty</div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">∞</div>
+      <div class="hero-stat-label">Любви</div>
     </div>
   </div>
 </section>
 
 <section id="menu">
-  <div class="section-header">
-    <span class="section-title">Меню</span>
-    <div class="categories">
-      <button class="cat-btn active" data-cat="all">Всё</button>
-      <button class="cat-btn" data-cat="coffee">Кофе</button>
-      <button class="cat-btn" data-cat="tea">Чай</button>
-      <button class="cat-btn" data-cat="food">Еда</button>
-      <button class="cat-btn" data-cat="cold">Холодное</button>
-    </div>
+  <div class="menu-toolbar">
+    <div class="toolbar-label">Меню</div>
+    <button class="cat-btn active" data-cat="all">Всё</button>
+    <button class="cat-btn" data-cat="coffee">Кофе</button>
+    <button class="cat-btn" data-cat="tea">Чай</button>
+    <button class="cat-btn" data-cat="food">Еда</button>
+    <button class="cat-btn" data-cat="cold">Холодное</button>
   </div>
-  <div class="menu-list" id="menuList"></div>
+  <div id="menuList"></div>
 </section>
 
-<section class="info-section" id="info">
-  <div class="info-block">
+<section class="info-grid" id="info">
+  <div class="info-cell">
     <div class="info-label">Адрес</div>
-    <div class="info-text">ул. Кофейная, 12<br>Москва, Россия</div>
+    <div class="info-value">ул. Кофейная, 12<br>Москва, Россия</div>
   </div>
-  <div class="info-block">
+  <div class="info-cell">
     <div class="info-label">Часы работы</div>
-    <div class="info-text">Пн — Пт &nbsp; 08:00 — 21:00<br>Сб — Вс &nbsp; 09:00 — 22:00</div>
+    <div class="info-value">Пн — Пт &nbsp; 08:00 — 21:00<br>Сб — Вс &nbsp; 09:00 — 22:00</div>
+  </div>
+  <div class="info-cell">
+    <div class="info-label">Контакт</div>
+    <div class="info-value">@coffeeshop<br>+7 (999) 000-00-00</div>
   </div>
 </section>
 
 <footer>
-  <span class="footer-copy">© 2026 Кофейня</span>
-  <span class="footer-copy">Сделано с любовью</span>
+  <span class="footer-text">© 2026 Кофейня</span>
+  <span class="footer-text">Сделано с любовью ☕</span>
 </footer>
 
 <div class="sticky-bar" id="stickyBar">
-  <button class="btn-sticky" onclick="openCart()">
+  <button class="sticky-btn" onclick="openCart()">
     <span id="stickyCount">0 позиций</span>
     <span id="stickyTotal">0 ₽</span>
   </button>
@@ -585,25 +669,26 @@
 <div class="cart-overlay" id="cartOverlay">
   <div class="cart-backdrop" onclick="closeCart()"></div>
   <div class="cart-panel">
-    <div class="cart-top">
-      <span class="cart-heading">Корзина</span>
-      <button class="cart-close" onclick="closeCart()">×</button>
+    <div class="cart-head">
+      <span class="cart-title">Корзина</span>
+      <button class="cart-x" onclick="closeCart()">×</button>
     </div>
-    <div class="cart-items" id="cartItems"></div>
-    <div class="cart-bottom">
+    <div class="cart-body" id="cartBody"></div>
+    <div class="cart-foot">
       <div class="cart-total-row">
         <span class="cart-total-label">Итого</span>
-        <span class="cart-total-price" id="cartTotal">0 ₽</span>
+        <span class="cart-total-val" id="cartTotal">0 ₽</span>
       </div>
-      <button class="btn-order" id="btnOrder" onclick="placeOrder()" disabled>Оформить заказ</button>
+      <button class="order-btn" id="orderBtn" onclick="placeOrder()" disabled>Оформить заказ</button>
     </div>
   </div>
 </div>
 
 <div class="success-screen" id="successScreen">
-  <div class="success-num">#<span id="orderNum">1</span></div>
-  <div class="success-label">Заказ принят</div>
-  <button class="success-back" onclick="resetOrder()">Вернуться в меню</button>
+  <div class="success-icon">✓</div>
+  <div class="success-big">#<span id="orderNum">1</span></div>
+  <div class="success-sub">Заказ принят · Готовим для вас</div>
+  <button class="success-back-btn" onclick="resetOrder()">Вернуться в меню</button>
 </div>
 
 <script>
@@ -631,107 +716,83 @@ let currentCat = 'all';
 function renderMenu() {
   const list = document.getElementById('menuList');
   list.innerHTML = '';
+  let idx = 1;
   ITEMS.forEach(item => {
     const hidden = currentCat !== 'all' && item.cat !== currentCat;
-    const inCart = (cart[item.id] || 0) > 0;
-    const row = document.createElement('div');
-    row.className = 'menu-item';
-    if (hidden) row.setAttribute('data-hidden', '1');
-    row.innerHTML = `
-      <div class="item-info">
+    const div = document.createElement('div');
+    div.className = 'menu-item';
+    if (hidden) div.setAttribute('data-hidden', '1');
+    div.innerHTML = `
+      <div class="item-num">${String(idx++).padStart(2,'0')}</div>
+      <div class="item-body">
         <div class="item-name">${item.name}</div>
         <div class="item-desc">${item.desc}</div>
       </div>
-      <div class="item-emoji">${item.emoji}</div>
       <div class="item-price">${item.price} ₽</div>
-      <button class="item-add ${inCart ? 'added' : ''}" onclick="addItem(${item.id})">+</button>
-    `;
-    list.appendChild(row);
+      <div class="item-add-wrap">
+        <button class="item-add ${(cart[item.id]||0)>0?'added':''}" onclick="addItem(${item.id})">+</button>
+      </div>`;
+    list.appendChild(div);
   });
 }
 
 function addItem(id) {
   cart[id] = (cart[id] || 0) + 1;
-  updateUI();
-  renderMenu();
+  updateUI(); renderMenu();
 }
 
-function changeQty(id, delta) {
-  cart[id] = (cart[id] || 0) + delta;
+function changeQty(id, d) {
+  cart[id] = (cart[id] || 0) + d;
   if (cart[id] <= 0) delete cart[id];
-  updateUI();
-  renderCartItems();
-  if (Object.keys(cart).length === 0) renderMenu();
+  updateUI(); renderCartBody();
+  if (!Object.keys(cart).length) renderMenu();
 }
 
-function getTotal() {
-  return Object.entries(cart).reduce((sum, [id, qty]) => {
-    const item = ITEMS.find(i => i.id == id);
-    return sum + (item ? item.price * qty : 0);
-  }, 0);
-}
+const getCount = () => Object.values(cart).reduce((a,b)=>a+b,0);
+const getTotal = () => Object.entries(cart).reduce((s,[id,q])=>s+(ITEMS.find(i=>i.id==id)?.price||0)*q,0);
 
-function getCount() {
-  return Object.values(cart).reduce((a, b) => a + b, 0);
-}
-
-function plural(n, a, b, c) {
-  if (n % 10 === 1 && n % 100 !== 11) return a;
-  if ([2,3,4].includes(n % 10) && ![12,13,14].includes(n % 100)) return b;
+function plural(n,a,b,c){
+  if(n%10===1&&n%100!==11)return a;
+  if([2,3,4].includes(n%10)&&![12,13,14].includes(n%100))return b;
   return c;
 }
 
 function updateUI() {
-  const count = getCount();
-  const total = getTotal();
-
-  const navCart = document.getElementById('navCart');
-  navCart.textContent = `Корзина (${count})`;
-  navCart.className = 'nav-cart' + (count > 0 ? ' has-items' : '');
-
-  document.getElementById('cartTotal').textContent = total + ' ₽';
-  document.getElementById('btnOrder').disabled = count === 0;
-  document.getElementById('stickyCount').textContent = count + ' ' + plural(count, 'позиция', 'позиции', 'позиций');
-  document.getElementById('stickyTotal').textContent = total + ' ₽';
-  document.getElementById('stickyBar').classList.toggle('visible', count > 0);
+  const n = getCount(), t = getTotal();
+  document.getElementById('cartBtn').textContent = `Корзина (${n})`;
+  document.getElementById('cartTotal').textContent = t + ' ₽';
+  document.getElementById('orderBtn').disabled = n === 0;
+  document.getElementById('stickyCount').textContent = n + ' ' + plural(n,'позиция','позиции','позиций');
+  document.getElementById('stickyTotal').textContent = t + ' ₽';
+  document.getElementById('stickyBar').classList.toggle('visible', n > 0);
 }
 
-function renderCartItems() {
-  const el = document.getElementById('cartItems');
+function renderCartBody() {
+  const el = document.getElementById('cartBody');
   const keys = Object.keys(cart);
-  if (keys.length === 0) {
-    el.innerHTML = '<div class="cart-empty">Корзина пуста</div>';
-    return;
-  }
+  if (!keys.length) { el.innerHTML = '<div class="cart-empty">Корзина пуста</div>'; return; }
   el.innerHTML = keys.map(id => {
-    const item = ITEMS.find(i => i.id == id);
-    const qty = cart[id];
-    return `<div class="cart-row">
-      <div>
-        <div class="cart-row-name">${item.name}</div>
-        <div class="cart-row-price">${item.price} ₽ × ${qty} = ${item.price * qty} ₽</div>
+    const item = ITEMS.find(i=>i.id==id), q = cart[id];
+    return `<div class="cart-line">
+      <div class="cart-line-info">
+        <div class="cart-line-name">${item.name}</div>
+        <div class="cart-line-price">${item.price} ₽ × ${q} = ${item.price*q} ₽</div>
       </div>
       <div class="cart-qty">
-        <button class="qty-btn" onclick="changeQty(${id}, -1)">−</button>
-        <span>${qty}</span>
-        <button class="qty-btn" onclick="changeQty(${id}, 1)">+</button>
+        <button class="qty-btn" onclick="changeQty(${id},-1)">−</button>
+        <span>${q}</span>
+        <button class="qty-btn" onclick="changeQty(${id},1)">+</button>
       </div>
     </div>`;
   }).join('');
 }
 
-function openCart() {
-  renderCartItems();
-  document.getElementById('cartOverlay').classList.add('open');
-}
-
-function closeCart() {
-  document.getElementById('cartOverlay').classList.remove('open');
-}
+function openCart() { renderCartBody(); document.getElementById('cartOverlay').classList.add('open'); }
+function closeCart() { document.getElementById('cartOverlay').classList.remove('open'); }
 
 document.querySelectorAll('.cat-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentCat = btn.dataset.cat;
     renderMenu();
@@ -739,48 +800,31 @@ document.querySelectorAll('.cat-btn').forEach(btn => {
 });
 
 async function placeOrder() {
-  const items = Object.entries(cart).map(([id, qty]) => {
-    const item = ITEMS.find(i => i.id == id);
-    return { name: item.name, qty, price: item.price };
+  const items = Object.entries(cart).map(([id,qty])=>{
+    const item = ITEMS.find(i=>i.id==id);
+    return {name:item.name, qty, price:item.price};
   });
-  const total = getTotal();
   const tg = window.Telegram?.WebApp;
   const user = tg?.initDataUnsafe?.user;
-
   try {
     const res = await fetch('/api/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: user?.id || 0,
-        username: user?.username || user?.first_name || 'web',
-        items,
-        total
-      })
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({user_id:user?.id||0, username:user?.username||user?.first_name||'web', items, total:getTotal()})
     });
     const data = await res.json();
     closeCart();
     document.getElementById('orderNum').textContent = data.order_id || '1';
     document.getElementById('successScreen').classList.add('open');
-  } catch(e) {
-    alert('Ошибка. Попробуй ещё раз.');
-  }
+  } catch(e) { alert('Ошибка. Попробуй ещё раз.'); }
 }
 
 function resetOrder() {
-  cart = {};
-  updateUI();
-  renderMenu();
+  cart = {}; updateUI(); renderMenu();
   document.getElementById('successScreen').classList.remove('open');
 }
 
-if (window.Telegram?.WebApp) {
-  window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.expand();
-}
-
-renderMenu();
-updateUI();
+if (window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+renderMenu(); updateUI();
 </script>
 </body>
 </html>
