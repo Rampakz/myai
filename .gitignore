@@ -8,3 +8,5 @@ factorial.go
 calc.go
 hello.txt
 !static/
+wa-blast/wa-blast
+wa-blast/*.db

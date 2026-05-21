@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ru" style="color-scheme: light;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>WA Blast — WhatsApp Рассылки</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root { color-scheme: light; }
+  body { font-family: 'Inter', sans-serif; background: #f3f4f6 !important; color: #111827 !important; }
+  .nav-item { @apply flex items-center gap-2 px-4 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer transition-colors; }
+  .nav-item.active { @apply bg-green-600 text-white; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .badge-sent { @apply bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full; }
+  .badge-failed { @apply bg-red-100 text-red-800 text-xs px-2 py-0.5 rounded-full; }
+  .badge-running { @apply bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full; }
+  .badge-pending { @apply bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-full; }
+  .badge-done { @apply bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full; }
+</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <aside class="w-60 bg-gray-800 flex flex-col py-6 px-3 gap-1 shrink-0">
+    <div class="px-4 mb-6">
+      <h1 class="text-white font-bold text-xl">WA Blast</h1>
+      <p class="text-gray-400 text-xs mt-0.5">WhatsApp рассылки</p>
+    </div>
+
+    <div id="status-pill" class="mx-4 mb-4 px-3 py-1.5 rounded-full text-xs font-medium text-center bg-gray-600 text-gray-300">
+      Проверка...
+    </div>
+
+    <nav>
+      <div class="nav-item active" onclick="navigate(this,'dashboard')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Дашборд
+      </div>
+      <div class="nav-item" onclick="navigate(this,'whatsapp')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21l4-4 4 4M3 9a9 9 0 1118 0 9 9 0 01-18 0z"/></svg>
+        WhatsApp
+      </div>
+      <div class="nav-item" onclick="navigate(this,'inbox')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        Входящие <span id="unread-badge" class="hidden ml-1 bg-red-500 text-white text-xs rounded-full px-1.5">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate(this,'reminders')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Напоминания
+      </div>
+      <div class="nav-item" onclick="navigate(this,'contacts')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Клиенты
+      </div>
+      <div class="nav-item" onclick="navigate(this,'templates')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Шаблоны
+      </div>
+      <div class="nav-item" onclick="navigate(this,'broadcasts')">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        Рассылки
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-auto p-8">
+
+    <!-- Dashboard Page -->
+    <div id="page-dashboard" class="page active">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Дашборд 💈</h2>
+
+      <!-- Stat cards -->
+      <div class="grid grid-cols-2 gap-4 mb-6" style="grid-template-columns: repeat(4,1fr)">
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Всего клиентов</p>
+          <p id="stat-total" class="text-3xl font-bold text-gray-800">—</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Визитов за месяц</p>
+          <p id="stat-month" class="text-3xl font-bold text-green-600">—</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Нужно напомнить</p>
+          <p id="stat-remind" class="text-3xl font-bold text-yellow-500">—</p>
+          <p class="text-xs text-gray-400 mt-1">не были 21+ дней</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Сообщений отправлено</p>
+          <p id="stat-messages" class="text-3xl font-bold text-blue-600">—</p>
+          <p class="text-xs text-gray-400 mt-1">за всё время</p>
+        </div>
+      </div>
+
+      <div class="grid gap-4" style="grid-template-columns: 1fr 1fr">
+        <!-- Weekly chart -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="font-semibold text-gray-700 mb-4 text-sm">Визиты по дням недели (30 дней)</h3>
+          <div id="weekly-chart" class="flex items-end gap-2 h-32"></div>
+        </div>
+
+        <!-- Top clients -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="font-semibold text-gray-700 mb-3 text-sm">Последние клиенты</h3>
+          <div id="top-clients" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="mt-4 bg-white rounded-xl shadow-sm p-4">
+        <h3 class="font-semibold text-gray-700 mb-3 text-sm">Быстрые действия</h3>
+        <div class="flex gap-3">
+          <button onclick="navigate(document.querySelector('[onclick*=reminders]'),'reminders')"
+            class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-2 rounded-lg text-sm hover:bg-yellow-100">
+            ⏰ Напомнить кто не был 21+ дней
+          </button>
+          <button onclick="navigate(document.querySelector('[onclick*=contacts]'),'contacts')"
+            class="bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-lg text-sm hover:bg-green-100">
+            ✓ Отметить визит клиента
+          </button>
+          <button onclick="navigate(document.querySelector('[onclick*=broadcasts]'),'broadcasts')"
+            class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-blue-100">
+            📢 Новая рассылка
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Insights -->
+      <div id="ai-insights-card" class="hidden mt-4 bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-xl shadow-sm p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-semibold text-purple-800 text-sm">✨ ИИ-советы по клиентам</h3>
+          <button onclick="loadAIInsights()" class="text-purple-500 hover:text-purple-700 text-xs border border-purple-200 px-2 py-1 rounded bg-white">
+            Обновить
+          </button>
+        </div>
+        <div id="ai-insights-list" class="space-y-2">
+          <p class="text-purple-400 text-sm text-center py-2">Загрузка...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp Page -->
+    <div id="page-whatsapp" class="page">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">WhatsApp</h2>
+      <div class="bg-white rounded-xl shadow-sm p-6 max-w-md">
+        <div id="wa-status-block">
+          <p class="text-gray-500 text-sm">Загрузка...</p>
+        </div>
+        <div id="wa-qr-block" class="hidden mt-4 flex flex-col items-center gap-3">
+          <p class="text-sm text-gray-600">Отсканируйте QR-код в WhatsApp → Связанные устройства</p>
+          <img id="qr-img" src="" alt="QR код" class="w-56 h-56 border border-gray-200 rounded">
+          <button onclick="loadStatus()" class="text-sm text-blue-600 hover:underline mt-2">Обновить</button>
+        </div>
+        <div id="wa-connected-block" class="hidden">
+          <div class="flex items-center gap-3 text-green-600">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div>
+              <p class="font-semibold text-lg">Подключено</p>
+              <p class="text-sm text-gray-500">WhatsApp активен и готов к рассылке</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inbox Page -->
+    <div id="page-inbox" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Входящие сообщения</h2>
+        <button onclick="markAllRead()" class="text-sm text-gray-500 hover:text-gray-700 border border-gray-300 px-3 py-1.5 rounded-lg">
+          Отметить все прочитанными
+        </button>
+      </div>
+      <div id="inbox-list" class="space-y-2">
+        <p class="text-center py-8 text-gray-400">Загрузка...</p>
+      </div>
+    </div>
+
+    <!-- Reminders Page -->
+    <div id="page-reminders" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Напоминания</h2>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4 mb-4 flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <label class="text-sm text-gray-600">Не был дольше</label>
+          <input id="overdue-days" type="number" value="21" min="1" max="365"
+            class="w-16 border border-gray-300 rounded px-2 py-1 text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-500">
+          <label class="text-sm text-gray-600">дней</label>
+        </div>
+        <button onclick="loadOverdue()" class="bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-green-700">Найти</button>
+        <button id="send-reminders-btn" onclick="sendReminders()" class="hidden bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-green-700">Отправить всем напоминание</button>
+      </div>
+      <div id="overdue-list" class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <p class="text-center py-8 text-gray-400 text-sm">Нажмите «Найти» чтобы показать клиентов</p>
+      </div>
+
+      <!-- Quick reminder modal -->
+      <div id="reminder-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+          <h3 class="font-semibold text-gray-800 mb-4">Отправить напоминание</h3>
+          <input id="reminder-contact-id" type="hidden">
+          <p id="reminder-contact-name" class="text-sm text-gray-600 mb-3"></p>
+          <select id="reminder-template" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <option value="">Выберите шаблон...</option>
+          </select>
+          <div class="flex gap-2">
+            <button onclick="sendSingleReminder()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm flex-1">Отправить</button>
+            <button onclick="document.getElementById('reminder-modal').classList.add('hidden')" class="text-gray-500 px-4 py-2 rounded-lg text-sm border">Отмена</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contacts Page -->
+    <div id="page-contacts" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Контакты</h2>
+        <div class="flex gap-2">
+          <label class="cursor-pointer bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+            Импорт CSV
+            <input type="file" accept=".csv" class="hidden" onchange="importCSV(event)">
+          </label>
+          <button onclick="showAddContact()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors">
+            + Добавить
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Contact Form -->
+      <div id="add-contact-form" class="hidden bg-white rounded-xl shadow-sm p-4 mb-4 flex gap-3 items-end">
+        <div class="flex-1">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Номер телефона</label>
+          <input id="new-phone" type="text" placeholder="77001234567" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <div class="flex-1">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Имя</label>
+          <input id="new-name" type="text" placeholder="Алексей" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <button onclick="addContact()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm">Сохранить</button>
+        <button onclick="document.getElementById('add-contact-form').classList.add('hidden')" class="text-gray-500 px-3 py-2 rounded-lg text-sm hover:bg-gray-100">Отмена</button>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Имя</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Телефон</th>
+              <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Последний визит</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody id="contacts-table">
+            <tr><td colspan="4" class="text-center py-8 text-gray-400">Загрузка...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="contacts-count" class="text-sm text-gray-500 mt-2"></p>
+    </div>
+
+    <!-- Templates Page -->
+    <div id="page-templates" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Шаблоны</h2>
+        <button onclick="showAddTemplate()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors">
+          + Новый шаблон
+        </button>
+      </div>
+
+      <!-- Template Form -->
+      <div id="template-form" class="hidden bg-white rounded-xl shadow-sm p-4 mb-4">
+        <input id="tmpl-id" type="hidden">
+        <div class="mb-3">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Название шаблона</label>
+          <input id="tmpl-name" type="text" placeholder="Например: Приветствие" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <div class="mb-3">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Текст сообщения</label>
+          <p class="text-xs text-gray-400 mb-1">Переменные: {{name}} — имя, {{phone}} — телефон</p>
+          <div class="flex gap-2 mb-2">
+            <input id="ai-description" type="text" placeholder="Опишите идею... (напр. «скидка 20% в честь дня рождения»)"
+              class="flex-1 border border-purple-200 bg-purple-50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 placeholder-purple-300">
+            <button onclick="generateWithAI()" id="ai-gen-btn"
+              class="bg-purple-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-700 whitespace-nowrap flex items-center gap-1.5">
+              ✨ Написать с ИИ
+            </button>
+          </div>
+          <textarea id="tmpl-body" rows="5" placeholder="Привет, {{name}}! Это специальное предложение для вас." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="saveTemplate()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm">Сохранить</button>
+          <button onclick="document.getElementById('template-form').classList.add('hidden')" class="text-gray-500 px-3 py-2 rounded-lg text-sm hover:bg-gray-100">Отмена</button>
+        </div>
+      </div>
+
+      <div id="templates-list" class="grid gap-4"></div>
+    </div>
+
+    <!-- Broadcasts Page -->
+    <div id="page-broadcasts" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Рассылки</h2>
+        <button onclick="showNewBroadcast()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors">
+          + Новая рассылка
+        </button>
+      </div>
+
+      <!-- New Broadcast Form -->
+      <div id="broadcast-form" class="hidden bg-white rounded-xl shadow-sm p-4 mb-4">
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Название</label>
+            <input id="bc-name" type="text" placeholder="Акция мая" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Шаблон</label>
+            <select id="bc-template" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+              <option value="">Выберите шаблон...</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Расписание (cron, необязательно)</label>
+          <input id="bc-schedule" type="text" placeholder="0 9 * * 1 — каждый понедельник в 9:00" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <div class="mb-3">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Контакты</label>
+          <div id="contacts-select" class="border border-gray-300 rounded-lg max-h-48 overflow-y-auto p-2 grid grid-cols-2 gap-1"></div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="createBroadcast()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm">Создать</button>
+          <button onclick="document.getElementById('broadcast-form').classList.add('hidden')" class="text-gray-500 px-3 py-2 rounded-lg text-sm hover:bg-gray-100">Отмена</button>
+        </div>
+      </div>
+
+      <div id="broadcasts-list" class="grid gap-4"></div>
+
+      <!-- Logs Modal -->
+      <div id="logs-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+          <div class="flex items-center justify-between p-4 border-b">
+            <h3 class="font-semibold text-gray-800">Журнал рассылки</h3>
+            <button onclick="closeLogs()" class="text-gray-400 hover:text-gray-600">✕</button>
+          </div>
+          <div class="p-4 border-b flex gap-6">
+            <div class="text-center"><p id="log-sent" class="text-2xl font-bold text-green-600">0</p><p class="text-xs text-gray-500">Отправлено</p></div>
+            <div class="text-center"><p id="log-failed" class="text-2xl font-bold text-red-500">0</p><p class="text-xs text-gray-500">Ошибок</p></div>
+          </div>
+          <div id="logs-table" class="overflow-y-auto flex-1 p-4">
+            <p class="text-gray-400 text-sm text-center py-4">Загрузка...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API = '/api';
+let allContacts = [];
+let allTemplates = [];
+let statusInterval;
+
+// Navigation
+function navigate(el, page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  el.classList.add('active');
+  if (page === 'dashboard') loadDashboard();
+  if (page === 'inbox') loadInbox();
+  if (page === 'contacts') loadContacts();
+  if (page === 'templates') loadTemplates();
+  if (page === 'broadcasts') { loadTemplates(); loadContacts(); loadBroadcasts(); }
+  if (page === 'reminders') { loadTemplates(); loadOverdue(); }
+}
+
+// Status polling
+async function loadStatus() {
+  try {
+    const r = await fetch(API + '/whatsapp/status');
+    const data = await r.json();
+    updateStatusUI(data);
+  } catch(e) {
+    const pill = document.getElementById('status-pill');
+    pill.textContent = 'Нет связи';
+    pill.className = 'mx-4 mb-4 px-3 py-1.5 rounded-full text-xs font-medium text-center bg-red-500 text-white';
+  }
+}
+
+function setPill(text, cls) {
+  const pill = document.getElementById('status-pill');
+  pill.textContent = text;
+  pill.className = 'mx-4 mb-4 px-3 py-1.5 rounded-full text-xs font-medium text-center ' + cls;
+}
+
+function updateStatusUI(data) {
+  const qrBlock = document.getElementById('wa-qr-block');
+  const connBlock = document.getElementById('wa-connected-block');
+  const statusBlock = document.getElementById('wa-status-block');
+
+  if (data.status === 'connected') {
+    setPill('Подключено', 'bg-green-600 text-white');
+    qrBlock.classList.add('hidden');
+    connBlock.classList.remove('hidden');
+    statusBlock.classList.add('hidden');
+  } else if (data.status === 'qr_pending' && data.qr) {
+    setPill('QR нужен', 'bg-yellow-500 text-white');
+    qrBlock.classList.remove('hidden');
+    connBlock.classList.add('hidden');
+    statusBlock.classList.add('hidden');
+    // Load QR as PNG from server (no CDN needed)
+    document.getElementById('qr-img').src = '/api/whatsapp/qr.png?t=' + Date.now();
+  } else {
+    setPill('Не подключено', 'bg-gray-600 text-gray-300');
+    qrBlock.classList.add('hidden');
+    connBlock.classList.add('hidden');
+    statusBlock.innerHTML = '<p class="text-gray-500 text-sm">Статус: ' + data.status + '</p>';
+    statusBlock.classList.remove('hidden');
+  }
+}
+
+// Contacts
+async function loadContacts() {
+  const r = await fetch(API + '/contacts');
+  allContacts = await r.json();
+  renderContacts();
+}
+
+function visitBadge(c) {
+  if (!c.last_visit) return '<span class="text-gray-400 text-xs">не приходил</span>';
+  const d = c.days_since_visit;
+  const date = new Date(c.last_visit).toLocaleDateString('ru');
+  if (d >= 28) return `<span class="text-red-500 text-xs font-medium">${date} (${d} дн. назад)</span>`;
+  if (d >= 21) return `<span class="text-yellow-500 text-xs font-medium">${date} (${d} дн. назад)</span>`;
+  return `<span class="text-green-600 text-xs">${date} (${d} дн. назад)</span>`;
+}
+
+function renderContacts() {
+  const tbody = document.getElementById('contacts-table');
+  if (!allContacts.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">Нет клиентов. Добавьте или импортируйте CSV.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = allContacts.map(c => `
+    <tr class="border-b border-gray-100 hover:bg-gray-50">
+      <td class="px-4 py-3 text-sm font-medium">${c.name || '—'}</td>
+      <td class="px-4 py-3 text-sm font-mono text-gray-500">${c.phone}</td>
+      <td class="px-4 py-3 text-sm">${visitBadge(c)}</td>
+      <td class="px-4 py-3 text-right flex gap-2 justify-end">
+        <button onclick="markVisit(${c.id})" class="text-green-600 hover:text-green-800 text-xs border border-green-200 px-2 py-0.5 rounded">✓ Был сегодня</button>
+        <button onclick="deleteContact(${c.id})" class="text-red-400 hover:text-red-600 text-xs">Удалить</button>
+      </td>
+    </tr>
+  `).join('');
+  document.getElementById('contacts-count').textContent = `Всего: ${allContacts.length} клиентов`;
+}
+
+async function markVisit(id) {
+  await fetch(API + '/contacts/' + id + '/visit', { method: 'POST' });
+  loadContacts();
+}
+
+function showAddContact() {
+  document.getElementById('add-contact-form').classList.remove('hidden');
+  document.getElementById('new-phone').focus();
+}
+
+async function addContact() {
+  const phone = document.getElementById('new-phone').value.trim();
+  const name = document.getElementById('new-name').value.trim();
+  if (!phone) return alert('Введите номер телефона');
+  await fetch(API + '/contacts', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({phone, name}) });
+  document.getElementById('new-phone').value = '';
+  document.getElementById('new-name').value = '';
+  document.getElementById('add-contact-form').classList.add('hidden');
+  loadContacts();
+}
+
+async function deleteContact(id) {
+  if (!confirm('Удалить контакт?')) return;
+  await fetch(API + '/contacts/' + id, { method: 'DELETE' });
+  loadContacts();
+}
+
+async function importCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  const r = await fetch(API + '/contacts/import', { method: 'POST', body: formData });
+  const data = await r.json();
+  alert('Импортировано: ' + (data.imported || 0) + ' контактов');
+  event.target.value = '';
+  loadContacts();
+}
+
+// Templates
+async function loadTemplates() {
+  const r = await fetch(API + '/templates');
+  allTemplates = await r.json();
+  renderTemplates();
+  // Update template selects
+  const sel = document.getElementById('bc-template');
+  if (sel) {
+    sel.innerHTML = '<option value="">Выберите шаблон...</option>' + allTemplates.map(t =>
+      `<option value="${t.id}">${t.name}</option>`).join('');
+  }
+}
+
+function renderTemplates() {
+  const list = document.getElementById('templates-list');
+  if (!list) return;
+  if (!allTemplates.length) {
+    list.innerHTML = '<p class="text-gray-400 text-center py-8">Нет шаблонов. Создайте первый!</p>';
+    return;
+  }
+  list.innerHTML = allTemplates.map(t => `
+    <div class="bg-white rounded-xl shadow-sm p-4">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <h3 class="font-semibold text-gray-800">${t.name}</h3>
+          <pre class="mt-2 text-sm text-gray-600 whitespace-pre-wrap font-sans bg-gray-50 rounded p-3">${t.body}</pre>
+        </div>
+        <div class="flex gap-2 ml-4">
+          <button onclick="editTemplate(${t.id})" class="text-blue-500 hover:text-blue-700 text-sm">Изменить</button>
+          <button onclick="deleteTemplate(${t.id})" class="text-red-400 hover:text-red-600 text-sm">Удалить</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showAddTemplate() {
+  document.getElementById('tmpl-id').value = '';
+  document.getElementById('tmpl-name').value = '';
+  document.getElementById('tmpl-body').value = '';
+  document.getElementById('template-form').classList.remove('hidden');
+}
+
+function editTemplate(id) {
+  const t = allTemplates.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('tmpl-id').value = t.id;
+  document.getElementById('tmpl-name').value = t.name;
+  document.getElementById('tmpl-body').value = t.body;
+  document.getElementById('template-form').classList.remove('hidden');
+}
+
+async function saveTemplate() {
+  const id = document.getElementById('tmpl-id').value;
+  const name = document.getElementById('tmpl-name').value.trim();
+  const body = document.getElementById('tmpl-body').value.trim();
+  if (!name || !body) return alert('Заполните название и текст');
+  if (id) {
+    await fetch(API + '/templates/' + id, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, body}) });
+  } else {
+    await fetch(API + '/templates', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, body}) });
+  }
+  document.getElementById('template-form').classList.add('hidden');
+  loadTemplates();
+}
+
+async function deleteTemplate(id) {
+  if (!confirm('Удалить шаблон?')) return;
+  await fetch(API + '/templates/' + id, { method: 'DELETE' });
+  loadTemplates();
+}
+
+// Broadcasts
+async function loadBroadcasts() {
+  const r = await fetch(API + '/broadcasts');
+  const broadcasts = await r.json();
+  renderBroadcasts(broadcasts);
+}
+
+function renderBroadcasts(broadcasts) {
+  const list = document.getElementById('broadcasts-list');
+  if (!broadcasts.length) {
+    list.innerHTML = '<p class="text-gray-400 text-center py-8">Нет рассылок. Создайте первую!</p>';
+    return;
+  }
+  list.innerHTML = broadcasts.map(b => `
+    <div class="bg-white rounded-xl shadow-sm p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-semibold text-gray-800">${b.name}</h3>
+            <span class="badge-${b.status}">${statusLabel(b.status)}</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">
+            Шаблон #${b.template_id}
+            ${b.schedule ? ' · Расписание: <code class="bg-gray-100 px-1 rounded">' + b.schedule + '</code>' : ''}
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="showLogs(${b.id})" class="text-gray-500 hover:text-gray-700 text-sm px-3 py-1.5 border rounded-lg">Журнал</button>
+          <button onclick="sendBroadcast(${b.id})" class="bg-green-600 text-white text-sm px-3 py-1.5 rounded-lg hover:bg-green-700">Отправить</button>
+          <button onclick="deleteBroadcast(${b.id})" class="text-red-400 hover:text-red-600 text-sm px-2">✕</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function statusLabel(s) {
+  return {pending:'Ожидает', running:'Отправляется', done:'Готово', failed:'Ошибка'}[s] || s;
+}
+
+function showNewBroadcast() {
+  // populate contacts checkboxes
+  const sel = document.getElementById('contacts-select');
+  sel.innerHTML = allContacts.map(c => `
+    <label class="flex items-center gap-2 text-sm cursor-pointer p-1 hover:bg-gray-50 rounded">
+      <input type="checkbox" value="${c.id}" class="contact-cb rounded">
+      <span>${c.name || c.phone} <span class="text-gray-400 text-xs">${c.name ? c.phone : ''}</span></span>
+    </label>
+  `).join('');
+  document.getElementById('broadcast-form').classList.remove('hidden');
+}
+
+async function createBroadcast() {
+  const name = document.getElementById('bc-name').value.trim();
+  const template_id = parseInt(document.getElementById('bc-template').value);
+  const schedule = document.getElementById('bc-schedule').value.trim();
+  const contact_ids = [...document.querySelectorAll('.contact-cb:checked')].map(x => parseInt(x.value));
+  if (!name) return alert('Введите название');
+  if (!template_id) return alert('Выберите шаблон');
+  if (!contact_ids.length) return alert('Выберите хотя бы один контакт');
+  await fetch(API + '/broadcasts', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name, template_id, schedule, contact_ids}) });
+  document.getElementById('broadcast-form').classList.add('hidden');
+  loadBroadcasts();
+}
+
+async function sendBroadcast(id) {
+  if (!confirm('Начать рассылку сейчас?')) return;
+  const r = await fetch(API + '/broadcasts/' + id + '/send', { method: 'POST' });
+  const data = await r.json();
+  if (data.error) return alert('Ошибка: ' + data.error);
+  alert('Рассылка запущена!');
+  loadBroadcasts();
+}
+
+async function deleteBroadcast(id) {
+  if (!confirm('Удалить рассылку?')) return;
+  await fetch(API + '/broadcasts/' + id, { method: 'DELETE' });
+  loadBroadcasts();
+}
+
+async function showLogs(id) {
+  document.getElementById('logs-modal').classList.remove('hidden');
+  const r = await fetch(API + '/broadcasts/' + id + '/logs');
+  const data = await r.json();
+  document.getElementById('log-sent').textContent = data.sent || 0;
+  document.getElementById('log-failed').textContent = data.failed || 0;
+  const logs = data.logs || [];
+  if (!logs.length) {
+    document.getElementById('logs-table').innerHTML = '<p class="text-gray-400 text-sm text-center py-4">Нет записей</p>';
+    return;
+  }
+  document.getElementById('logs-table').innerHTML = `
+    <table class="w-full text-sm">
+      <thead><tr class="text-left text-xs text-gray-500 border-b">
+        <th class="pb-2">Телефон</th><th class="pb-2">Имя</th><th class="pb-2">Статус</th><th class="pb-2">Время</th>
+      </tr></thead>
+      <tbody>${logs.map(l => `
+        <tr class="border-b border-gray-50">
+          <td class="py-1.5 font-mono">${l.phone}</td>
+          <td class="py-1.5">${l.name || '—'}</td>
+          <td class="py-1.5"><span class="badge-${l.status}">${l.status === 'sent' ? 'Отправлено' : 'Ошибка'}</span>
+            ${l.error ? '<span class="text-red-400 text-xs ml-1">' + l.error + '</span>' : ''}</td>
+          <td class="py-1.5 text-gray-400">${new Date(l.sent_at).toLocaleString('ru')}</td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  `;
+}
+
+function closeLogs() {
+  document.getElementById('logs-modal').classList.add('hidden');
+}
+
+// Reminders
+let overdueContacts = [];
+
+async function loadOverdue() {
+  const days = document.getElementById('overdue-days').value || 21;
+  const r = await fetch(API + '/contacts/overdue?days=' + days);
+  const data = await r.json();
+  overdueContacts = data.contacts || [];
+  renderOverdue(data.days);
+}
+
+function renderOverdue(days) {
+  const list = document.getElementById('overdue-list');
+  const btn = document.getElementById('send-reminders-btn');
+  if (!overdueContacts.length) {
+    list.innerHTML = `<p class="text-center py-8 text-gray-400 text-sm">Нет клиентов, которые не были дольше ${days} дней 🎉</p>`;
+    btn.classList.add('hidden');
+    return;
+  }
+  btn.classList.remove('hidden');
+  list.innerHTML = `
+    <table class="w-full">
+      <thead class="bg-gray-50 border-b border-gray-200">
+        <tr>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Имя</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Телефон</th>
+          <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase">Последний визит</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${overdueContacts.map(c => `
+          <tr class="border-b border-gray-100 hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm font-medium">${c.name || '—'}</td>
+            <td class="px-4 py-3 text-sm font-mono text-gray-500">${c.phone}</td>
+            <td class="px-4 py-3 text-sm">${visitBadge(c)}</td>
+            <td class="px-4 py-3 text-right">
+              <button onclick="openReminderModal(${c.id}, '${(c.name||c.phone).replace(/'/g,"\\'")}', '${c.phone}')"
+                class="text-green-600 hover:text-green-800 text-xs border border-green-200 px-2 py-1 rounded">
+                Написать
+              </button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function openReminderModal(id, name, phone) {
+  document.getElementById('reminder-contact-id').value = id;
+  document.getElementById('reminder-contact-name').textContent = `Клиент: ${name} (${phone})`;
+  const sel = document.getElementById('reminder-template');
+  sel.innerHTML = '<option value="">Выберите шаблон...</option>' + allTemplates.map(t =>
+    `<option value="${t.id}">${t.name}</option>`).join('');
+  document.getElementById('reminder-modal').classList.remove('hidden');
+}
+
+async function sendSingleReminder() {
+  const contactId = parseInt(document.getElementById('reminder-contact-id').value);
+  const templateId = parseInt(document.getElementById('reminder-template').value);
+  if (!templateId) return alert('Выберите шаблон');
+  const contact = overdueContacts.find(c => c.id === contactId);
+  if (!contact) return;
+  const tmpl = allTemplates.find(t => t.id === templateId);
+  if (!tmpl) return;
+  const text = tmpl.body
+    .replace(/{{name}}/gi, contact.name || '')
+    .replace(/{{phone}}/gi, contact.phone);
+  const r = await fetch(API + '/contacts/' + contactId + '/visit', { method: 'POST' });
+  // Send via broadcast
+  const bc = await (await fetch(API + '/broadcasts', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ name: 'Напоминание ' + contact.name, template_id: templateId, contact_ids: [contactId] })
+  })).json();
+  await fetch(API + '/broadcasts/' + bc.id + '/send', { method: 'POST' });
+  document.getElementById('reminder-modal').classList.add('hidden');
+  alert('Напоминание отправлено!');
+  loadOverdue();
+}
+
+async function sendReminders() {
+  const templateId = parseInt(prompt('ID шаблона для рассылки:'));
+  if (!templateId) return;
+  const ids = overdueContacts.map(c => c.id);
+  const bc = await (await fetch(API + '/broadcasts', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ name: 'Напоминание всем', template_id: templateId, contact_ids: ids })
+  })).json();
+  await fetch(API + '/broadcasts/' + bc.id + '/send', { method: 'POST' });
+  alert('Рассылка запущена для ' + ids.length + ' клиентов!');
+}
+
+// Inbox
+async function loadInbox() {
+  const r = await fetch(API + '/inbox');
+  const data = await r.json();
+  updateUnreadBadge(data.unread || 0);
+  const msgs = data.messages || [];
+  const list = document.getElementById('inbox-list');
+  if (!msgs.length) {
+    list.innerHTML = '<p class="text-center py-8 text-gray-400">Входящих сообщений нет</p>';
+    return;
+  }
+  const actionLabel = { visit: '✅ Визит отмечен', booking: '📅 Запрос записи', '': '' };
+  list.innerHTML = msgs.map(m => `
+    <div class="bg-white rounded-xl shadow-sm p-4 flex items-start gap-3 ${m.read ? 'opacity-70' : 'border-l-4 border-green-500'}">
+      <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-500 shrink-0">
+        ${(m.name || m.phone).charAt(0).toUpperCase()}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="font-medium text-gray-800 text-sm">${m.name || m.phone}</span>
+          ${m.name ? `<span class="text-gray-400 text-xs">${m.phone}</span>` : ''}
+          ${m.auto_action ? `<span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">${actionLabel[m.auto_action]}</span>` : ''}
+          <span class="ml-auto text-xs text-gray-400">${new Date(m.received_at).toLocaleString('ru', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+        <p class="text-sm text-gray-600">${m.message}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function markAllRead() {
+  await fetch(API + '/inbox/read', { method: 'POST' });
+  loadInbox();
+}
+
+function updateUnreadBadge(count) {
+  const badge = document.getElementById('unread-badge');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+// Dashboard
+async function loadDashboard() {
+  const r = await fetch(API + '/stats');
+  const data = await r.json();
+  const s = data.stats;
+  document.getElementById('stat-total').textContent = s.total_clients;
+  document.getElementById('stat-month').textContent = s.visits_this_month;
+  document.getElementById('stat-remind').textContent = s.need_reminder;
+  document.getElementById('stat-messages').textContent = s.messages_sent_total;
+  renderWeeklyChart(data.weekly || []);
+  renderTopClients(data.top || []);
+}
+
+function renderWeeklyChart(weekly) {
+  const max = Math.max(...weekly.map(d => d.count), 1);
+  document.getElementById('weekly-chart').innerHTML = weekly.map(d => `
+    <div class="flex-1 flex flex-col items-center gap-1">
+      <span class="text-xs text-gray-500 font-medium">${d.count || ''}</span>
+      <div class="w-full rounded-t-md transition-all"
+        style="height:${Math.max(4, (d.count/max)*100)}px; background:${d.count>0?'#16a34a':'#e5e7eb'}">
+      </div>
+      <span class="text-xs text-gray-400">${d.day}</span>
+    </div>
+  `).join('');
+}
+
+function renderTopClients(top) {
+  const el = document.getElementById('top-clients');
+  if (!top.length) {
+    el.innerHTML = '<p class="text-sm text-gray-400">Нет данных</p>';
+    return;
+  }
+  el.innerHTML = top.map(c => `
+    <div class="flex items-center justify-between text-sm">
+      <div>
+        <span class="font-medium text-gray-700">${c.name || c.phone}</span>
+        <span class="text-gray-400 text-xs ml-2">${c.phone}</span>
+      </div>
+      <span class="text-gray-400 text-xs">${c.last_visit ? new Date(c.last_visit).toLocaleDateString('ru') : '—'}</span>
+    </div>
+  `).join('');
+}
+
+// AI
+async function generateWithAI() {
+  const desc = document.getElementById('ai-description').value.trim();
+  if (!desc) return alert('Опишите идею для сообщения');
+  const btn = document.getElementById('ai-gen-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Генерирую...';
+  try {
+    const r = await fetch(API + '/ai/generate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ description: desc })
+    });
+    const data = await r.json();
+    if (data.error) { alert('Ошибка ИИ: ' + data.error); return; }
+    document.getElementById('tmpl-body').value = data.text;
+  } catch(e) {
+    alert('ИИ недоступен');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✨ Написать с ИИ';
+  }
+}
+
+let aiEnabled = false;
+async function checkAIStatus() {
+  try {
+    const r = await fetch(API + '/ai/status');
+    const d = await r.json();
+    aiEnabled = d.enabled;
+    if (aiEnabled) {
+      document.getElementById('ai-insights-card').classList.remove('hidden');
+      loadAIInsights();
+    }
+  } catch(e) {}
+}
+
+async function loadAIInsights() {
+  const el = document.getElementById('ai-insights-list');
+  el.innerHTML = '<p class="text-purple-400 text-sm text-center py-2">Анализирую клиентов...</p>';
+  try {
+    const r = await fetch(API + '/ai/analyze?days=21');
+    const data = await r.json();
+    const insights = data.insights || [];
+    if (!insights.length) {
+      el.innerHTML = '<p class="text-purple-400 text-sm text-center py-2">Все клиенты недавно были 🎉</p>';
+      return;
+    }
+    el.innerHTML = insights.slice(0, 5).map(ins => `
+      <div class="bg-white rounded-lg p-3 text-sm border border-purple-100">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="font-medium text-gray-800">${ins.Name || ins.Phone}</span>
+          <span class="text-xs text-gray-400">${ins.DaysSince} дн. без визита</span>
+        </div>
+        <p class="text-purple-700 text-xs">${ins.Suggestion}</p>
+      </div>
+    `).join('');
+  } catch(e) {
+    el.innerHTML = '<p class="text-red-400 text-sm text-center py-2">Ошибка загрузки</p>';
+  }
+}
+
+// Init
+loadDashboard();
+loadStatus();
+checkAIStatus();
+setInterval(loadStatus, 5000);
+setInterval(async () => {
+  const r = await fetch(API + '/inbox').catch(() => null);
+  if (r) { const d = await r.json(); updateUnreadBadge(d.unread || 0); }
+}, 10000);
+</script>
+</body>
+</html>
