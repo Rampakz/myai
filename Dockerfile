@@ -9,7 +9,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY *.go ./
-RUN go build -ldflags "-linkmode external -extldflags '-static'" -o myai main.go rag.go agents.go telegram.go db.go
+RUN go build -ldflags "-linkmode external -extldflags '-static'" -o myai main.go rag.go agents.go telegram.go db.go server.go
 
 FROM alpine:latest
 RUN apk add --no-cache ca-certificates sqlite-libs
